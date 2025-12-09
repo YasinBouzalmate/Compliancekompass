@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { Mail, Lock, User, ArrowRight, AlertCircle, Eye, EyeOff } from "lucide-react";
+import {
+  Mail,
+  Lock,
+  User,
+  ArrowRight,
+  AlertCircle,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -15,19 +23,19 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
 
   const [fieldErrors, setFieldErrors] = useState({
     name: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
 
   // Validation functions
@@ -45,7 +53,7 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
       name: "",
       email: "",
       password: "",
-      confirmPassword: ""
+      confirmPassword: "",
     };
 
     let isValid = true;
@@ -105,11 +113,11 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
       const user = {
         name: formData.name || formData.email.split("@")[0],
         email: formData.email,
-        loggedInAt: new Date().toISOString()
+        loggedInAt: new Date().toISOString(),
       };
 
       localStorage.setItem("complianceUser", JSON.stringify(user));
-      
+
       setIsLoading(false);
       onLoginSuccess();
     }, 1000);
@@ -130,7 +138,7 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
       name: "",
       email: "",
       password: "",
-      confirmPassword: ""
+      confirmPassword: "",
     });
   };
 
@@ -139,9 +147,7 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
       <div className="w-full max-w-md">
         {/* Logo and Title */}
         <div className="text-center mb-8">
-          <h1 className="text-purple-600 mb-2">
-            Compliance-kompass
-          </h1>
+          <h1 className="text-purple-600 mb-2">Compliance-kompass</h1>
           <p className="text-slate-600">Echomedic</p>
         </div>
 
@@ -154,10 +160,9 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
                 {isLogin ? "Logg inn for å fortsette" : "Opprett en konto"}
               </p>
               <p className="text-xs text-blue-800">
-                {isLogin 
+                {isLogin
                   ? "Få tilgang til dine lagrede rammeverk, dokumenter og handlingsplaner."
-                  : "Din informasjon lagres sikkert slik at du kan fortsette arbeidet når som helst."
-                }
+                  : "Din informasjon lagres sikkert slik at du kan fortsette arbeidet når som helst."}
               </p>
             </div>
           </div>
@@ -170,10 +175,9 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
               {isLogin ? "Logg inn" : "Opprett konto"}
             </h2>
             <p className="text-sm text-slate-600">
-              {isLogin 
-                ? "Velkommen tilbake! Logg inn for å fortsette kartleggingen." 
-                : "Registrer deg for å starte compliance-kartleggingen."
-              }
+              {isLogin
+                ? "Velkommen tilbake! Logg inn for å fortsette kartleggingen."
+                : "Registrer deg for å starte compliance-kartleggingen."}
             </p>
           </div>
 
@@ -202,13 +206,19 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
                     type="text"
                     value={formData.name}
                     onChange={(e) => handleInputChange("name", e.target.value)}
-                    className={`pl-10 ${fieldErrors.name ? "border-red-500 focus:ring-red-500" : ""}`}
+                    className={`pl-10 ${
+                      fieldErrors.name
+                        ? "border-red-500 focus:ring-red-500"
+                        : ""
+                    }`}
                     placeholder="Ola Nordmann"
                     disabled={isLoading}
                   />
                 </div>
                 {fieldErrors.name && (
-                  <p className="text-xs text-red-600 mt-1">{fieldErrors.name}</p>
+                  <p className="text-xs text-red-600 mt-1">
+                    {fieldErrors.name}
+                  </p>
                 )}
               </div>
             )}
@@ -225,7 +235,9 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
-                  className={`pl-10 ${fieldErrors.email ? "border-red-500 focus:ring-red-500" : ""}`}
+                  className={`pl-10 ${
+                    fieldErrors.email ? "border-red-500 focus:ring-red-500" : ""
+                  }`}
                   placeholder="din@epost.no"
                   disabled={isLoading}
                 />
@@ -246,8 +258,14 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   value={formData.password}
-                  onChange={(e) => handleInputChange("password", e.target.value)}
-                  className={`pl-10 pr-10 ${fieldErrors.password ? "border-red-500 focus:ring-red-500" : ""}`}
+                  onChange={(e) =>
+                    handleInputChange("password", e.target.value)
+                  }
+                  className={`pl-10 pr-10 ${
+                    fieldErrors.password
+                      ? "border-red-500 focus:ring-red-500"
+                      : ""
+                  }`}
                   placeholder="Minst 8 tegn"
                   disabled={isLoading}
                 />
@@ -256,11 +274,17 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
                 </button>
               </div>
               {fieldErrors.password && (
-                <p className="text-xs text-red-600 mt-1">{fieldErrors.password}</p>
+                <p className="text-xs text-red-600 mt-1">
+                  {fieldErrors.password}
+                </p>
               )}
             </div>
 
@@ -276,14 +300,22 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
                     id="confirmPassword"
                     type={showPassword ? "text" : "password"}
                     value={formData.confirmPassword}
-                    onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                    className={`pl-10 pr-10 ${fieldErrors.confirmPassword ? "border-red-500 focus:ring-red-500" : ""}`}
+                    onChange={(e) =>
+                      handleInputChange("confirmPassword", e.target.value)
+                    }
+                    className={`pl-10 pr-10 ${
+                      fieldErrors.confirmPassword
+                        ? "border-red-500 focus:ring-red-500"
+                        : ""
+                    }`}
                     placeholder="Gjenta passordet"
                     disabled={isLoading}
                   />
                 </div>
                 {fieldErrors.confirmPassword && (
-                  <p className="text-xs text-red-600 mt-1">{fieldErrors.confirmPassword}</p>
+                  <p className="text-xs text-red-600 mt-1">
+                    {fieldErrors.confirmPassword}
+                  </p>
                 )}
               </div>
             )}
@@ -316,10 +348,9 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
               className="text-sm text-purple-600 hover:text-purple-700 hover:underline"
               disabled={isLoading}
             >
-              {isLogin 
-                ? "Har du ikke en konto? Registrer deg her" 
-                : "Har du allerede en konto? Logg inn her"
-              }
+              {isLogin
+                ? "Har du ikke en konto? Registrer deg her"
+                : "Har du allerede en konto? Logg inn her"}
             </button>
           </div>
 
