@@ -13,6 +13,7 @@ import {
   User,
   LogIn,
 } from "lucide-react";
+const complianceLogo = require("../assets/image.png") as string;
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
@@ -75,8 +76,12 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-700 rounded-lg flex items-center justify-center">
-                <Shield className="h-6 w-6 text-white" />
+              <div className="w-10 h-10 rounded-lg overflow-hidden bg-white shadow-inner">
+                <img
+                  src={complianceLogo}
+                  alt="Compliance-kompass logo"
+                  className="h-full w-full object-cover"
+                />
               </div>
               <div>
                 <h1 className="text-purple-600">Compliance-kompass</h1>

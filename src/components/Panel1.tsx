@@ -6,7 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
-import { toast } from "sonner@2.0.3";
+import { toast } from "sonner";
 
 interface Panel1Props {
   onNext: () => void;
