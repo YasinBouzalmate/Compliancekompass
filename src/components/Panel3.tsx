@@ -59,8 +59,10 @@ export function Panel3({ onBack }: Panel3Props) {
   const [editingCategory, setEditingCategory] = useState<string>("");
   const [isNewTask, setIsNewTask] = useState(false);
 
-  const initialTasks: TasksData = {
-    "Må før pilot 2026": [
+const CATEGORY_ORDER = ["Må før pilot 2026", "Må før anbud", "Kan tas senere"] as const;
+
+const initialTasks: TasksData = {
+  "Må før pilot 2026": [
       { 
         id: "1",
         title: "Etablere rutine for tilgangsstyring", 
@@ -139,34 +141,35 @@ export function Panel3({ onBack }: Panel3Props) {
   // Convert generated actions to tasks and merge with initial tasks on mount or when generated actions change
   useEffect(() => {
     if (generatedActions && generatedActions.length > 0) {
-      const convertedTasks: TasksData = {};
-      
-      // Initialize with empty arrays for all categories
-      convertedTasks["Må før pilot 2026"] = [];
-      convertedTasks["Må før anbud"] = [];
-      convertedTasks["Kan tas senere"] = [];
-      
-      // Add generated actions
-      generatedActions.forEach((action: GeneratedAction) => {
-        const task: Task = {
-          id: action.id,
-          title: action.title,
-          responsible: action.responsible,
-          deadline: action.deadline,
-          priority: action.priority,
-          riskLevel: action.riskLevel,
-          consequence: action.consequence,
-          relatedFrameworks: action.relatedFrameworks,
-          impact: action.impact
-        };
-        
-        if (!convertedTasks[action.category]) {
-          convertedTasks[action.category] = [];
-        }
-        convertedTasks[action.category].push(task);
+      setTasks(prevTasks => {
+        // Start from existing tasks but strip out previously generated tasks to avoid duplicates
+        const updatedTasks = CATEGORY_ORDER.reduce((acc, category) => {
+          const existingTasks = prevTasks[category] || [];
+          acc[category] = existingTasks.filter(task => !task.id.startsWith("generated-"));
+          return acc;
+        }, {} as TasksData);
+
+        generatedActions.forEach((action: GeneratedAction) => {
+          const task: Task = {
+            id: action.id,
+            title: action.title,
+            responsible: action.responsible,
+            deadline: action.deadline,
+            priority: action.priority,
+            riskLevel: action.riskLevel,
+            consequence: action.consequence,
+            relatedFrameworks: action.relatedFrameworks,
+            impact: action.impact
+          };
+
+          if (!updatedTasks[action.category]) {
+            updatedTasks[action.category] = [];
+          }
+          updatedTasks[action.category].push(task);
+        });
+
+        return updatedTasks;
       });
-      
-      setTasks(convertedTasks);
       toast.success(`${generatedActions.length} tiltak generert basert på analysen!`, {
         description: "Tiltakene er prioritert etter risiko og tidslinje."
       });
@@ -670,16 +673,18 @@ export function Panel3({ onBack }: Panel3Props) {
         </div>
 
         {/* Tasks Grid */}
-        {Object.keys(groupedTasks).length > 0 ? (
+        {CATEGORY_ORDER.length > 0 ? (
           <div className="grid md:grid-cols-3 gap-6 mb-6">
-            {Object.entries(groupedTasks).map(([category, categoryTasks]) => (
+            {CATEGORY_ORDER.map((category) => {
+              const categoryTasks = groupedTasks[category] || [];
+              return (
               <div key={category} className="bg-white rounded-lg border border-slate-200 overflow-hidden">
                 <div className="bg-slate-100 px-4 py-3 border-b border-slate-200">
                   <h3 className="text-slate-800">{category}</h3>
                   <p className="text-sm text-slate-500">{categoryTasks.length} tiltak</p>
                 </div>
                 <div className="p-4 space-y-3">
-                  {categoryTasks.map((task) => (
+                  {categoryTasks.length > 0 ? categoryTasks.map((task) => (
                     <div key={task.id} className="relative">
                       {isEditMode && (
                         <div className="absolute -top-2 -right-2 flex gap-1 z-10">
@@ -757,7 +762,11 @@ export function Panel3({ onBack }: Panel3Props) {
                         </TooltipContent>
                       </Tooltip>
                     </div>
-                  ))}
+                  )) : (
+                    <div className="text-sm text-slate-500 border border-dashed border-slate-200 rounded-lg p-4 text-center">
+                      Ingen tiltak i denne kategorien ennå.
+                    </div>
+                  )}
                 </div>
                 {isEditMode && (
                   <div className="p-4">
@@ -772,7 +781,8 @@ export function Panel3({ onBack }: Panel3Props) {
                   </div>
                 )}
               </div>
-            ))}
+            );
+            })}
           </div>
         ) : (
           <div className="bg-white rounded-lg border border-slate-200 p-12 mb-6 text-center">
