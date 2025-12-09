@@ -9,7 +9,7 @@ import { ScrollToTop } from "./components/ScrollToTop";
 import { ArrowLeft, ClipboardList, LogOut, AlertTriangle } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { Toaster } from "./components/ui/sonner";
-import { toast } from "sonner";
+import { toast } from "sonner@2.0.3";
 import { useInactivityTimer } from "./hooks/useInactivityTimer";
 import {
   AlertDialog,
@@ -22,6 +22,8 @@ import {
   AlertDialogTitle,
 } from "./components/ui/alert-dialog";
 import { ComplianceProvider } from "./contexts/ComplianceContext";
+import { supabase } from "./lib/supabase";
+import type { User } from "@supabase/supabase-js";
 
 export default function App() {
   const [showApp, setShowApp] = useState(false);
@@ -29,24 +31,37 @@ export default function App() {
   const [showLogin, setShowLogin] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-  const [currentUser, setCurrentUser] = useState<{
-    name: string;
-    email: string;
-  } | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [showInactivityWarning, setShowInactivityWarning] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Check if user is already logged in on mount
   useEffect(() => {
-    const storedUser = localStorage.getItem("complianceUser");
-    if (storedUser) {
-      const user = JSON.parse(storedUser);
-      setCurrentUser(user);
-      setIsAuthenticated(true);
-    }
+    // Check active session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setCurrentUser(session.user);
+        setIsAuthenticated(true);
+      }
+      setIsLoading(false);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setCurrentUser(session.user);
+        setIsAuthenticated(true);
+      } else {
+        setCurrentUser(null);
+        setIsAuthenticated(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("complianceUser");
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     setCurrentUser(null);
     setIsAuthenticated(false);
     setShowApp(false);
@@ -56,11 +71,10 @@ export default function App() {
     toast.success("Du er nå logget ut");
   };
 
-  const handleInactivityLogout = () => {
-    handleLogout();
+  const handleInactivityLogout = async () => {
+    await handleLogout();
     toast.error("Du ble logget ut på grunn av inaktivitet", {
-      description:
-        "For sikkerhetsmessige årsaker logger vi deg ut etter 15 minutter uten aktivitet.",
+      description: "For sikkerhetsmessige årsaker logger vi deg ut etter 15 minutter uten aktivitet."
     });
   };
 
@@ -82,25 +96,33 @@ export default function App() {
     toast.success("Session forlenget");
   };
 
+  // Show loading state while checking auth
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-slate-600">Laster...</p>
+        </div>
+      </div>
+    );
+  }
+
   // Show test guide if activated
   if (showTestGuide) {
-    return <UserTestGuide onClose={() => setShowTestGuide(false)} />;
+    return (
+      <UserTestGuide onClose={() => setShowTestGuide(false)} />
+    );
   }
 
   // Show login page if user clicked "Get Started" but not authenticated
   if (showLogin && !isAuthenticated) {
     return (
-      <LoginPage
+      <LoginPage 
         onLoginSuccess={() => {
-          const storedUser = localStorage.getItem("complianceUser");
-          if (storedUser) {
-            const user = JSON.parse(storedUser);
-            setCurrentUser(user);
-            setIsAuthenticated(true);
-            setShowLogin(false);
-            setShowApp(true);
-            toast.success(`Velkommen, ${user.name}!`);
-          }
+          setShowLogin(false);
+          setShowApp(true);
+          toast.success(`Velkommen, ${currentUser?.email}!`);
         }}
         onBack={() => {
           setShowLogin(false);
@@ -113,7 +135,7 @@ export default function App() {
   // Show landing page if app hasn't started
   if (!showApp) {
     return (
-      <LandingPage
+      <LandingPage 
         onGetStarted={() => {
           if (isAuthenticated) {
             setShowApp(true);
@@ -138,28 +160,30 @@ export default function App() {
       <div className="min-h-screen bg-slate-50">
         <Toaster position="top-right" richColors />
         {/* Header */}
-        <header className="bg-white border-b border-slate-200">
-          <div className="max-w-7xl mx-auto px-8 py-6">
+        <header className="bg-white border-b border-slate-200 shadow-sm">
+          <div className="max-w-7xl mx-auto px-8 py-7">
             <div className="flex items-center justify-between">
               {/* Logo/Home button - clickable */}
-              <button
+              <button 
                 onClick={handleBackToLanding}
                 className="group flex flex-col hover:opacity-80 transition-opacity"
               >
-                <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-700 rounded-lg flex items-center justify-center group-hover:shadow-lg transition-shadow">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 bg-gradient-to-br from-purple-600 to-purple-700 rounded-lg flex items-center justify-center group-hover:shadow-lg transition-shadow">
                     <ArrowLeft className="h-5 w-5 text-white" />
                   </div>
                   <div className="text-left">
-                    <h1 className="text-purple-600">Compliance-kompass</h1>
+                    <h1 className="text-purple-600">
+                      Compliance-kompass
+                    </h1>
                     <p className="text-slate-600 mt-0.5 text-sm">Echomedic</p>
                   </div>
                 </div>
-                <p className="text-xs text-slate-500 mt-1 ml-12 group-hover:text-purple-600 transition-colors">
+                <p className="text-xs text-slate-500 mt-2 ml-14 group-hover:text-purple-600 transition-colors">
                   ← Klikk for å gå til forsiden
                 </p>
               </button>
-
+              
               {/* Right side buttons */}
               <div className="flex gap-3">
                 <Button
@@ -194,7 +218,7 @@ export default function App() {
 
         {/* Progress Steps */}
         <div className="bg-white border-b border-slate-200">
-          <div className="max-w-7xl mx-auto px-8 py-6">
+          <div className="max-w-7xl mx-auto px-8 py-8">
             <div className="flex items-start justify-center gap-24 max-w-2xl mx-auto">
               {[
                 { num: 1, title: "Start" },
@@ -239,49 +263,42 @@ export default function App() {
         </div>
 
         {/* Main Content */}
-        <main className="max-w-7xl mx-auto px-8 py-12">
-          {currentStep === 1 && <Panel1 onNext={() => setCurrentStep(2)} />}
+        <main className="max-w-7xl mx-auto px-8 py-14">
+          {currentStep === 1 && (
+            <Panel1 onNext={() => setCurrentStep(2)} />
+          )}
           {currentStep === 2 && (
             <Panel2
               onNext={() => setCurrentStep(3)}
               onBack={() => setCurrentStep(1)}
             />
           )}
-          {currentStep === 3 && <Panel3 onBack={() => setCurrentStep(2)} />}
+          {currentStep === 3 && (
+            <Panel3 onBack={() => setCurrentStep(2)} />
+          )}
         </main>
 
         {/* Inactivity Warning Dialog */}
-        <AlertDialog
-          open={showInactivityWarning}
-          onOpenChange={setShowInactivityWarning}
-        >
+        <AlertDialog open={showInactivityWarning} onOpenChange={setShowInactivityWarning}>
           <AlertDialogContent className="max-w-md">
             <AlertDialogHeader>
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
                   <AlertTriangle className="w-6 h-6 text-yellow-600" />
                 </div>
-                <AlertDialogTitle className="text-xl">
-                  Advarsel om inaktivitet
-                </AlertDialogTitle>
+                <AlertDialogTitle className="text-xl">Advarsel om inaktivitet</AlertDialogTitle>
               </div>
               <AlertDialogDescription className="text-base">
-                Du har vært inaktiv i 14 minutter. Du vil bli logget ut om{" "}
-                <span className="font-bold text-red-600">1 minutt</span> hvis du
-                ikke gjør noe.
-                <br />
-                <br />
+                Du har vært inaktiv i 14 minutter. Du vil bli logget ut om <span className="font-bold text-red-600">1 minutt</span> hvis du ikke gjør noe.
+                <br /><br />
                 Dette er en sikkerhetsfunksjon for å beskytte dine data.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel
-                onClick={handleLogout}
-                className="bg-slate-100 hover:bg-slate-200"
-              >
+              <AlertDialogCancel onClick={handleLogout} className="bg-slate-100 hover:bg-slate-200">
                 Logg ut nå
               </AlertDialogCancel>
-              <AlertDialogAction
+              <AlertDialogAction 
                 onClick={handleStayLoggedIn}
                 className="bg-purple-600 hover:bg-purple-700 text-white"
               >
@@ -291,7 +308,7 @@ export default function App() {
           </AlertDialogContent>
         </AlertDialog>
 
-        {/* Scroll to top button */}
+        {/* Scroll to Top Button */}
         <ScrollToTop />
       </div>
     </ComplianceProvider>

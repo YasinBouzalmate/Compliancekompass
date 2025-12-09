@@ -1,17 +1,11 @@
 import { useState } from "react";
-import {
-  Mail,
-  Lock,
-  User,
-  ArrowRight,
-  AlertCircle,
-  Eye,
-  EyeOff,
-} from "lucide-react";
+import { Mail, Lock, User, ArrowRight, AlertCircle, Eye, EyeOff } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Alert, AlertDescription } from "./ui/alert";
+import { supabase } from "../lib/supabase";
+import { toast } from "sonner";
 
 interface LoginPageProps {
   onLoginSuccess: () => void;
@@ -23,20 +17,29 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    confirmPassword: "",
+    confirmPassword: ""
   });
 
   const [fieldErrors, setFieldErrors] = useState({
     name: "",
     email: "",
     password: "",
-    confirmPassword: "",
+    confirmPassword: ""
   });
+
+  // Check if Supabase is configured
+  const isSupabaseConfigured = () => {
+    const url = import.meta.env?.VITE_SUPABASE_URL;
+    const key = import.meta.env?.VITE_SUPABASE_ANON_KEY;
+    return url && key && !url.includes('placeholder') && url !== '';
+  };
+
+  const supabaseConfigured = isSupabaseConfigured();
 
   // Validation functions
   const validateEmail = (email: string): boolean => {
@@ -53,7 +56,7 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
       name: "",
       email: "",
       password: "",
-      confirmPassword: "",
+      confirmPassword: ""
     };
 
     let isValid = true;
@@ -107,20 +110,92 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
 
     setIsLoading(true);
 
-    // Simulate API call (in real app, this would be Supabase auth)
-    setTimeout(() => {
-      // Mock authentication - store user in localStorage
-      const user = {
-        name: formData.name || formData.email.split("@")[0],
-        email: formData.email,
-        loggedInAt: new Date().toISOString(),
-      };
+    try {
+      // Check if Supabase is properly configured
+      if (!supabaseConfigured) {
+        setError("Supabase er ikke konfigurert. Vennligst sett opp VITE_SUPABASE_URL og VITE_SUPABASE_ANON_KEY i .env filen.");
+        setIsLoading(false);
+        toast.error("Konfigurasjonsfeil", {
+          description: "Supabase environment variabler mangler. Se konsollen for mer informasjon.",
+        });
+        return;
+      }
 
-      localStorage.setItem("complianceUser", JSON.stringify(user));
+      if (isLogin) {
+        // Login with Supabase
+        const { data, error: loginError } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password,
+        });
 
+        if (loginError) {
+          // Handle specific errors
+          if (loginError.message.includes("Invalid login credentials")) {
+            setError("Feil passord.");
+          } else if (loginError.message.includes("Email not confirmed")) {
+            setError("E-post er ikke bekreftet. Sjekk innboksen din.");
+          } else if (loginError.message.includes("User not found")) {
+            setError("Bruker finnes ikke.");
+          } else {
+            setError(loginError.message);
+          }
+          setIsLoading(false);
+          return;
+        }
+
+        if (data.user) {
+          toast.success("Innlogging vellykket!", {
+            description: `Velkommen tilbake, ${data.user.email}`,
+          });
+          onLoginSuccess();
+        }
+      } else {
+        // Register with Supabase
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            data: {
+              name: formData.name,
+            },
+          },
+        });
+
+        if (signUpError) {
+          // Handle specific errors
+          if (signUpError.message.includes("User already registered")) {
+            setError("Denne e-posten er allerede registrert.");
+          } else if (signUpError.message.includes("Password should be at least")) {
+            setError("Passord må være minst 8 tegn.");
+          } else {
+            setError(signUpError.message);
+          }
+          setIsLoading(false);
+          return;
+        }
+
+        if (data.user) {
+          toast.success("Konto opprettet!", {
+            description: "Du kan nå logge inn med din nye konto.",
+            duration: 5000,
+          });
+          
+          // Switch to login mode after successful registration
+          setIsLogin(true);
+          setFormData({
+            name: "",
+            email: formData.email, // Keep email for easy login
+            password: "",
+            confirmPassword: "",
+          });
+        }
+      }
+    } catch (err) {
+      setError("En uventet feil oppstod. Prøv igjen senere.");
+      console.error("Auth error:", err);
+    } finally {
       setIsLoading(false);
-      onLoginSuccess();
-    }, 1000);
+    }
   };
 
   const handleInputChange = (field: keyof typeof formData, value: string) => {
@@ -138,7 +213,7 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
       name: "",
       email: "",
       password: "",
-      confirmPassword: "",
+      confirmPassword: ""
     });
   };
 
@@ -147,9 +222,29 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
       <div className="w-full max-w-md">
         {/* Logo and Title */}
         <div className="text-center mb-8">
-          <h1 className="text-purple-600 mb-2">Compliance-kompass</h1>
+          <h1 className="text-purple-600 mb-2">
+            Compliance-kompass
+          </h1>
           <p className="text-slate-600">Echomedic</p>
         </div>
+
+        {/* Supabase Configuration Warning */}
+        {!supabaseConfigured && (
+          <Alert className="mb-6 bg-yellow-50 border-yellow-300">
+            <AlertCircle className="h-4 w-4 text-yellow-600" />
+            <AlertDescription className="text-yellow-900">
+              <p className="mb-2">
+                <strong>Supabase er ikke konfigurert</strong>
+              </p>
+              <p className="text-sm">
+                For å aktivere innlogging, vennligst sett opp Supabase credentials i <code className="bg-yellow-100 px-1 rounded">/lib/supabase.ts</code>
+              </p>
+              <p className="text-xs mt-2">
+                Se instruksjoner i konsollen (F12)
+              </p>
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Info Box */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
@@ -160,9 +255,10 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
                 {isLogin ? "Logg inn for å fortsette" : "Opprett en konto"}
               </p>
               <p className="text-xs text-blue-800">
-                {isLogin
+                {isLogin 
                   ? "Få tilgang til dine lagrede rammeverk, dokumenter og handlingsplaner."
-                  : "Din informasjon lagres sikkert slik at du kan fortsette arbeidet når som helst."}
+                  : "Din informasjon lagres sikkert slik at du kan fortsette arbeidet når som helst."
+                }
               </p>
             </div>
           </div>
@@ -175,9 +271,10 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
               {isLogin ? "Logg inn" : "Opprett konto"}
             </h2>
             <p className="text-sm text-slate-600">
-              {isLogin
-                ? "Velkommen tilbake! Logg inn for å fortsette kartleggingen."
-                : "Registrer deg for å starte compliance-kartleggingen."}
+              {isLogin 
+                ? "Velkommen tilbake! Logg inn for å fortsette kartleggingen." 
+                : "Registrer deg for å starte compliance-kartleggingen."
+              }
             </p>
           </div>
 
@@ -206,19 +303,13 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
                     type="text"
                     value={formData.name}
                     onChange={(e) => handleInputChange("name", e.target.value)}
-                    className={`pl-10 ${
-                      fieldErrors.name
-                        ? "border-red-500 focus:ring-red-500"
-                        : ""
-                    }`}
+                    className={`pl-10 ${fieldErrors.name ? "border-red-500 focus:ring-red-500" : ""}`}
                     placeholder="Ola Nordmann"
                     disabled={isLoading}
                   />
                 </div>
                 {fieldErrors.name && (
-                  <p className="text-xs text-red-600 mt-1">
-                    {fieldErrors.name}
-                  </p>
+                  <p className="text-xs text-red-600 mt-1">{fieldErrors.name}</p>
                 )}
               </div>
             )}
@@ -235,9 +326,7 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
-                  className={`pl-10 ${
-                    fieldErrors.email ? "border-red-500 focus:ring-red-500" : ""
-                  }`}
+                  className={`pl-10 ${fieldErrors.email ? "border-red-500 focus:ring-red-500" : ""}`}
                   placeholder="din@epost.no"
                   disabled={isLoading}
                 />
@@ -258,14 +347,8 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   value={formData.password}
-                  onChange={(e) =>
-                    handleInputChange("password", e.target.value)
-                  }
-                  className={`pl-10 pr-10 ${
-                    fieldErrors.password
-                      ? "border-red-500 focus:ring-red-500"
-                      : ""
-                  }`}
+                  onChange={(e) => handleInputChange("password", e.target.value)}
+                  className={`pl-10 pr-10 ${fieldErrors.password ? "border-red-500 focus:ring-red-500" : ""}`}
                   placeholder="Minst 8 tegn"
                   disabled={isLoading}
                 />
@@ -274,17 +357,11 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
                 >
-                  {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
               {fieldErrors.password && (
-                <p className="text-xs text-red-600 mt-1">
-                  {fieldErrors.password}
-                </p>
+                <p className="text-xs text-red-600 mt-1">{fieldErrors.password}</p>
               )}
             </div>
 
@@ -300,22 +377,14 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
                     id="confirmPassword"
                     type={showPassword ? "text" : "password"}
                     value={formData.confirmPassword}
-                    onChange={(e) =>
-                      handleInputChange("confirmPassword", e.target.value)
-                    }
-                    className={`pl-10 pr-10 ${
-                      fieldErrors.confirmPassword
-                        ? "border-red-500 focus:ring-red-500"
-                        : ""
-                    }`}
+                    onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                    className={`pl-10 pr-10 ${fieldErrors.confirmPassword ? "border-red-500 focus:ring-red-500" : ""}`}
                     placeholder="Gjenta passordet"
                     disabled={isLoading}
                   />
                 </div>
                 {fieldErrors.confirmPassword && (
-                  <p className="text-xs text-red-600 mt-1">
-                    {fieldErrors.confirmPassword}
-                  </p>
+                  <p className="text-xs text-red-600 mt-1">{fieldErrors.confirmPassword}</p>
                 )}
               </div>
             )}
@@ -348,9 +417,10 @@ export function LoginPage({ onLoginSuccess, onBack }: LoginPageProps) {
               className="text-sm text-purple-600 hover:text-purple-700 hover:underline"
               disabled={isLoading}
             >
-              {isLogin
-                ? "Har du ikke en konto? Registrer deg her"
-                : "Har du allerede en konto? Logg inn her"}
+              {isLogin 
+                ? "Har du ikke en konto? Registrer deg her" 
+                : "Har du allerede en konto? Logg inn her"
+              }
             </button>
           </div>
 

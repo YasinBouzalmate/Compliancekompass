@@ -1,53 +1,62 @@
-import { ArrowUp } from "lucide-react";
 import { useState, useEffect } from "react";
+import { ChevronUp } from "lucide-react";
 
 export function ScrollToTop() {
-  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
+  // Show button when user scrolls halfway down the page
   useEffect(() => {
-    const handleScroll = () => {
-      // Vis knappen når brukeren har scrollet minst 200px
-      const scrollY = window.scrollY;
-      setShowScrollTop(scrollY > 200);
+    const toggleVisibility = () => {
+      if (window.scrollY > 300) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+    // Check on mount
+    toggleVisibility();
+
+    window.addEventListener("scroll", toggleVisibility);
+
+    return () => {
+      window.removeEventListener("scroll", toggleVisibility);
+    };
   }, []);
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
-  // Alltid render knappen, men skjul/vis med CSS
   return (
-    <button
-      onClick={scrollToTop}
-      style={{
-        position: "fixed",
-        bottom: "2rem",
-        right: "2rem",
-        zIndex: 9999,
-        width: "3.5rem",
-        height: "3.5rem",
-        backgroundColor: "#9333ea",
-        color: "white",
-        borderRadius: "50%",
-        border: "none",
-        cursor: "pointer",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        boxShadow: "0 4px 14px rgba(147, 51, 234, 0.4)",
-        opacity: showScrollTop ? 1 : 0,
-        transform: showScrollTop ? "translateY(0)" : "translateY(1rem)",
-        transition: "all 0.3s ease",
-        pointerEvents: showScrollTop ? "auto" : "none",
-      }}
-      aria-label="Scroll til toppen"
-    >
-      <ArrowUp style={{ width: "1.5rem", height: "1.5rem" }} />
-    </button>
+    <>
+      {isVisible && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 w-14 h-14 bg-gradient-to-br from-purple-600 to-purple-700 text-white rounded-full shadow-lg hover:shadow-xl hover:from-purple-700 hover:to-purple-800 transition-all duration-300 flex items-center justify-center z-50 group animate-fade-in"
+          aria-label="Scroll til toppen"
+        >
+          <ChevronUp className="w-6 h-6 group-hover:translate-y-[-2px] transition-transform duration-200" />
+        </button>
+      )}
+      <style>{`
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.3s ease-out;
+        }
+      `}</style>
+    </>
   );
 }

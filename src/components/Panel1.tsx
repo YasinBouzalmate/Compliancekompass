@@ -148,21 +148,21 @@ export function Panel1({ onNext }: Panel1Props) {
   return (
     <div className="max-w-4xl mx-auto">
       {/* Title Section */}
-      <div className="mb-8">
-        <h2 className="text-slate-800 mb-2">
+      <div className="mb-10">
+        <h2 className="text-slate-800 mb-3">
           Velg rammeverk og del informasjon
         </h2>
-        <p className="text-slate-600">
+        <p className="text-slate-600 text-lg">
           Velg ett eller flere compliance-rammeverk som er relevante for
           din virksomhet og last opp eksisterende dokumentasjon.
         </p>
       </div>
 
       <TooltipProvider>
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-6">
           {/* Left Column - Frameworks */}
-          <div className="bg-white rounded-lg border border-slate-200 p-6">
-            <div className="flex items-center justify-between mb-4">
+          <div className="bg-white rounded-xl border border-slate-200 p-8 shadow-sm">
+            <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <h3 className="text-slate-800">
                   Velg relevante rammeverk
@@ -177,7 +177,7 @@ export function Panel1({ onNext }: Panel1Props) {
 
             {/* Validation message */}
             {showValidationError && selectedFrameworks.length === 0 && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm text-red-800">
@@ -188,7 +188,7 @@ export function Panel1({ onNext }: Panel1Props) {
             )}
             
             {/* Select All / Clear All buttons */}
-            <div className="flex gap-2 mb-4">
+            <div className="flex gap-2 mb-5">
               <button
                 onClick={selectAllFrameworks}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-purple-200 text-purple-700 rounded-lg hover:bg-purple-50 transition-colors"
@@ -207,7 +207,7 @@ export function Panel1({ onNext }: Panel1Props) {
               )}
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3 mb-6">
               {allFrameworks.map((framework) => {
                 const isCustom = framework.id.startsWith('custom_');
                 return (
@@ -274,7 +274,7 @@ export function Panel1({ onNext }: Panel1Props) {
             </div>
 
             {/* Add Custom Framework */}
-            <div className="mt-4">
+            <div>
               {!showAddFramework ? (
                 <button
                   onClick={() => setShowAddFramework(true)}
@@ -328,8 +328,8 @@ export function Panel1({ onNext }: Panel1Props) {
           </div>
 
           {/* Right Column - Upload */}
-          <div className="bg-white rounded-lg border border-slate-200 p-6">
-            <h3 className="text-slate-800 mb-4">
+          <div className="bg-white rounded-xl border border-slate-200 p-8 shadow-sm">
+            <h3 className="text-slate-800 mb-6">
               Last opp dokumenter
             </h3>
             <div
@@ -371,8 +371,8 @@ export function Panel1({ onNext }: Panel1Props) {
               )}
             </div>
 
-            <div className="mt-6 p-4 bg-slate-50 rounded-lg">
-              <p className="text-sm text-slate-600">
+            <div className="mt-6 p-5 bg-slate-50 border border-slate-200 rounded-lg">
+              <p className="text-sm text-slate-600 leading-relaxed">
                 Du vil også besvare 10-15 spørsmål for å
                 kartlegge dagens praksis.
               </p>
@@ -382,11 +382,11 @@ export function Panel1({ onNext }: Panel1Props) {
       </TooltipProvider>
 
       {/* Info Box */}
-      <div className="mt-8 bg-purple-50 border border-purple-200 rounded-lg p-6">
-        <h4 className="text-purple-900 mb-2">
+      <div className="mt-10 bg-gradient-to-br from-purple-50 to-purple-100/50 border border-purple-200 rounded-xl p-6 shadow-sm">
+        <h4 className="text-purple-900 mb-3">
           Lav terskel for oppstart
         </h4>
-        <p className="text-purple-800">
+        <p className="text-purple-800 leading-relaxed">
           Systemet er designet for små team. Selv med kun 2
           personer i selskapet kan dere få oversikt over
           compliance-status og konkrete handlingsplaner.
@@ -394,13 +394,13 @@ export function Panel1({ onNext }: Panel1Props) {
       </div>
 
       {/* Action Button */}
-      <div className="mt-8 flex justify-end">
+      <div className="mt-10 flex justify-end">
         <button
           onClick={handleNext}
-          className={`px-8 py-3 rounded-lg transition-all ${
+          className={`px-10 py-4 rounded-lg transition-all shadow-md hover:shadow-lg ${
             selectedFrameworks.length === 0
               ? "bg-slate-300 text-slate-500 cursor-not-allowed"
-              : "bg-purple-600 text-white hover:bg-purple-700 hover:shadow-lg"
+              : "bg-purple-600 text-white hover:bg-purple-700"
           }`}
         >
           Start kartlegging
