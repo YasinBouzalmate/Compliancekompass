@@ -33,7 +33,7 @@ export default function App() {
   const [currentStep, setCurrentStep] = useState(1);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [showInactivityWarning, setShowInactivityWarning] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+const [isLoading, setIsLoading] = useState(true);
 
   // Check if user is already logged in on mount
   useEffect(() => {
@@ -132,20 +132,20 @@ export default function App() {
     );
   }
 
+  const handleStartOrLogin = () => {
+    if (isAuthenticated) {
+      setShowApp(true);
+    } else {
+      setShowLogin(true);
+    }
+  };
+
   // Show landing page if app hasn't started
   if (!showApp) {
     return (
       <LandingPage 
-        onGetStarted={() => {
-          if (isAuthenticated) {
-            setShowApp(true);
-          } else {
-            setShowLogin(true);
-          }
-        }}
-        onLoginClick={() => {
-          setShowLogin(true);
-        }}
+        onGetStarted={handleStartOrLogin}
+        onLoginClick={handleStartOrLogin}
       />
     );
   }

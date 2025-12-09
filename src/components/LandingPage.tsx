@@ -16,7 +16,14 @@ import {
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
@@ -39,7 +46,9 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   const scrollToHowItWorks = () => {
-    document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" });
+    document
+      .getElementById("how-it-works")
+      ?.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleDemoSubmit = (e: React.FormEvent) => {
@@ -97,17 +106,22 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
           <div>
             <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-700 border-2 border-purple-200 px-6 py-3 rounded-full mb-10 shadow-sm">
               <Sparkles className="w-5 h-5" />
-              <span className="font-semibold">Echomedic Compliance-kompass</span>
+              <span className="font-semibold">
+                Echomedic Compliance-kompass
+              </span>
             </div>
 
             <h1 className="text-purple-900 mb-8 leading-tight">
               Compliance-oversikt på
-              <span className="block text-purple-600">minutter, ikke måneder</span>
+              <span className="block text-purple-600">
+                minutter, ikke måneder
+              </span>
             </h1>
 
             <p className="text-slate-600 mb-10 text-lg leading-relaxed">
-              Automatiser kartlegging av compliance-krav innenfor Normen, ISO 27001, GDPR, 
-              ISO 13485 og ISO 42001. Få konkrete handlingsplaner basert på faktisk risiko.
+              Automatiser kartlegging av compliance-krav innenfor Normen, ISO
+              27001, GDPR, ISO 13485 og ISO 42001. Få konkrete handlingsplaner
+              basert på faktisk risiko.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-14">
@@ -154,7 +168,7 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
                   <div className="w-3 h-3 rounded-full bg-yellow-400" />
                   <div className="w-3 h-3 rounded-full bg-green-400" />
                 </div>
-                
+
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
                     <span className="text-sm text-green-800">ISO 27001</span>
@@ -207,39 +221,41 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
                 num: "01",
                 icon: FileText,
                 title: "Velg & Last opp",
-                description: "Velg relevante compliance-rammeverk og last opp eksisterende dokumentasjon. Vårt system analyserer innholdet automatisk.",
+                description:
+                  "Velg relevante compliance-rammeverk og last opp eksisterende dokumentasjon. Vårt system analyserer innholdet automatisk.",
                 color: "purple",
               },
               {
                 num: "02",
                 icon: BarChart3,
                 title: "Få innsikt",
-                description: "Se umiddelbar visuell oversikt over compliance-status med fargekodet scoring. Identifiser gap og muligheter raskt.",
+                description:
+                  "Se umiddelbar visuell oversikt over compliance-status med fargekodet scoring. Identifiser gap og muligheter raskt.",
                 color: "purple",
               },
               {
                 num: "03",
                 icon: ListChecks,
                 title: "Handle smart",
-                description: "Motta prioritert tiltaksliste basert på risiko, kompleksitet og tidslinje. Start med det som betyr mest.",
+                description:
+                  "Motta prioritert tiltaksliste basert på risiko, kompleksitet og tidslinje. Start med det som betyr mest.",
                 color: "purple",
               },
             ].map((step, idx) => (
-              <Card key={idx} className="relative p-8 border-2 border-purple-100 hover:border-purple-300 hover:shadow-xl transition-all bg-white group">
+              <Card
+                key={idx}
+                className="relative p-8 border-2 border-purple-100 hover:border-purple-300 hover:shadow-xl transition-all bg-white group"
+              >
                 <div className="absolute -top-4 left-8 bg-purple-600 text-white px-4 py-2 rounded-full text-sm">
                   {step.num}
                 </div>
-                
+
                 <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center mb-6 mt-4 group-hover:scale-110 transition-transform">
                   <step.icon className="h-8 w-8 text-purple-600" />
                 </div>
-                
-                <h3 className="text-purple-900 mb-3">
-                  {step.title}
-                </h3>
-                <p className="text-slate-600">
-                  {step.description}
-                </p>
+
+                <h3 className="text-purple-900 mb-3">{step.title}</h3>
+                <p className="text-slate-600">{step.description}</p>
               </Card>
             ))}
           </div>
@@ -285,16 +301,17 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
                 gradient: "from-purple-600 to-purple-700",
               },
             ].map((benefit, idx) => (
-              <Card key={idx} className="p-6 border border-slate-200 hover:border-purple-300 hover:shadow-lg transition-all group">
-                <div className={`w-12 h-12 bg-gradient-to-br ${benefit.gradient} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+              <Card
+                key={idx}
+                className="p-6 border border-slate-200 hover:border-purple-300 hover:shadow-lg transition-all group"
+              >
+                <div
+                  className={`w-12 h-12 bg-gradient-to-br ${benefit.gradient} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}
+                >
                   <benefit.icon className="h-6 w-6 text-white" />
                 </div>
-                <h4 className="text-purple-900 mb-2">
-                  {benefit.title}
-                </h4>
-                <p className="text-slate-600 text-sm">
-                  {benefit.description}
-                </p>
+                <h4 className="text-purple-900 mb-2">{benefit.title}</h4>
+                <p className="text-slate-600 text-sm">{benefit.description}</p>
               </Card>
             ))}
           </div>
@@ -315,21 +332,24 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
               </h2>
               <div className="space-y-5 text-slate-600 leading-relaxed">
                 <p>
-                  <span className="text-purple-600">Echomedic</span> er et fremtidsrettet selskap som kombinerer
-                  compliance-ekspertise med innovativ teknologi for å gjøre regelverkshåndtering
+                  <span className="text-purple-600">Echomedic</span> er et
+                  fremtidsrettet selskap som kombinerer compliance-ekspertise
+                  med innovativ teknologi for å gjøre regelverkshåndtering
                   tilgjengelig for små og mellomstore virksomheter.
                 </p>
                 <p>
-                  Vi vet at compliance ofte oppleves som en tung og tidkrevende byrde, spesielt
-                  for team med begrensede ressurser. Derfor har vi utviklet{" "}
-                  <span className="text-purple-600">Compliance-kompass</span> – en intelligent
-                  plattform som automatiserer kartlegging, analyse og prioritering av
-                  compliance-krav.
+                  Vi vet at compliance ofte oppleves som en tung og tidkrevende
+                  byrde, spesielt for team med begrensede ressurser. Derfor har
+                  vi utviklet{" "}
+                  <span className="text-purple-600">Compliance-kompass</span> –
+                  en intelligent plattform som automatiserer kartlegging,
+                  analyse og prioritering av compliance-krav.
                 </p>
                 <p>
-                  Vårt mål er å gjøre compliance-arbeid forutsigbart, strukturert og faktisk
-                  gjennomførbart for team på 2+ personer. Vi tror på at sikkerhet, kvalitet
-                  og personvern ikke skal være forbeholdt store bedrifter med store budsjetter.
+                  Vårt mål er å gjøre compliance-arbeid forutsigbart,
+                  strukturert og faktisk gjennomførbart for team på 2+ personer.
+                  Vi tror på at sikkerhet, kvalitet og personvern ikke skal være
+                  forbeholdt store bedrifter med store budsjetter.
                 </p>
               </div>
 
@@ -341,8 +361,9 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
                   <div>
                     <h4 className="text-purple-900 mb-2">Vår visjon</h4>
                     <p className="text-slate-600 text-sm leading-relaxed">
-                      Gjøre compliance-arbeid tilgjengelig, forståelig og gjennomførbart for
-                      norske virksomheter – uansett størrelse eller bransje.
+                      Gjøre compliance-arbeid tilgjengelig, forståelig og
+                      gjennomførbart for norske virksomheter – uansett størrelse
+                      eller bransje.
                     </p>
                   </div>
                 </div>
@@ -364,9 +385,12 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
                     "ISO 27001 (Informasjonssikkerhet)",
                     "GDPR (Personvern)",
                     "ISO 13485 (Medisinsk utstyr)",
-                    "ISO 42001 (AI-styring)"
+                    "ISO 42001 (AI-styring)",
                   ].map((area, idx) => (
-                    <li key={idx} className="flex items-start gap-3 text-slate-700">
+                    <li
+                      key={idx}
+                      className="flex items-start gap-3 text-slate-700"
+                    >
                       <CheckCircle2 className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
                       <span>{area}</span>
                     </li>
@@ -386,9 +410,12 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
                     { label: "Tilgjengelighet", desc: "Enkel for alle" },
                     { label: "Presisjon", desc: "Riktig analyse" },
                     { label: "Effektivitet", desc: "Spar tid" },
-                    { label: "Transparens", desc: "Tydelige resultater" }
+                    { label: "Transparens", desc: "Tydelige resultater" },
                   ].map((value, idx) => (
-                    <div key={idx} className="text-center p-4 bg-purple-50 rounded-lg">
+                    <div
+                      key={idx}
+                      className="text-center p-4 bg-purple-50 rounded-lg"
+                    >
                       <div className="text-purple-700 mb-1">{value.label}</div>
                       <p className="text-slate-600 text-xs">{value.desc}</p>
                     </div>
@@ -407,7 +434,8 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
             Klar til å ta kontroll over compliance?
           </h2>
           <p className="text-purple-100 mb-8 text-lg">
-            Få oversikt over compliance-status på minutter, ikke måneder. Start gratis i dag.
+            Få oversikt over compliance-status på minutter, ikke måneder. Start
+            gratis i dag.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
@@ -419,17 +447,18 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
             </Button>
             <Dialog open={demoDialogOpen} onOpenChange={setDemoDialogOpen}>
               <DialogTrigger asChild>
-                <Button
-                  className="border-2 border-white text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 px-8 py-6 shadow-lg"
-                >
+                <Button className="border-2 border-white text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 px-8 py-6 shadow-lg">
                   Planlegg demo
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
-                  <DialogTitle className="text-purple-900">Planlegg en demo</DialogTitle>
+                  <DialogTitle className="text-purple-900">
+                    Planlegg en demo
+                  </DialogTitle>
                   <DialogDescription className="text-slate-600">
-                    Fyll ut skjemaet nedenfor så kontakter vi deg for å avtale en demo av Compliance-kompass.
+                    Fyll ut skjemaet nedenfor så kontakter vi deg for å avtale
+                    en demo av Compliance-kompass.
                   </DialogDescription>
                 </DialogHeader>
 
@@ -443,7 +472,9 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
                           id="name"
                           placeholder="Ola Nordmann"
                           value={formData.name}
-                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          onChange={(e) =>
+                            setFormData({ ...formData, name: e.target.value })
+                          }
                           className="pl-10"
                           required
                         />
@@ -459,7 +490,9 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
                           type="email"
                           placeholder="ola@bedrift.no"
                           value={formData.email}
-                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          onChange={(e) =>
+                            setFormData({ ...formData, email: e.target.value })
+                          }
                           className="pl-10"
                           required
                         />
@@ -474,7 +507,12 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
                           id="company"
                           placeholder="Bedrift AS"
                           value={formData.company}
-                          onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              company: e.target.value,
+                            })
+                          }
                           className="pl-10"
                           required
                         />
@@ -487,7 +525,9 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
                         id="message"
                         placeholder="Fortell oss litt om deres compliance-behov..."
                         value={formData.message}
-                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, message: e.target.value })
+                        }
                         rows={4}
                       />
                     </div>
@@ -514,23 +554,17 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
                     <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                       <CheckCircle2 className="w-8 h-8 text-green-600" />
                     </div>
-                    <h3 className="text-purple-900 mb-2">Takk for din interesse!</h3>
+                    <h3 className="text-purple-900 mb-2">
+                      Takk for din interesse!
+                    </h3>
                     <p className="text-slate-600">
-                      Vi har mottatt din forespørsel og kontakter deg innen 24 timer.
+                      Vi har mottatt din forespørsel og kontakter deg innen 24
+                      timer.
                     </p>
                   </div>
                 )}
               </DialogContent>
             </Dialog>
-            {onLoginClick && (
-              <Button
-                onClick={onLoginClick}
-                className="bg-white text-purple-600 hover:bg-purple-50 px-8 py-6 shadow-xl"
-              >
-                Logg inn
-                <LogIn className="ml-2 h-5 w-5" />
-              </Button>
-            )}
           </div>
         </div>
       </div>
