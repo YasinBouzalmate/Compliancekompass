@@ -67,16 +67,15 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
       <div className="min-h-screen bg-white overflow-hidden relative">
         {/* Watermark logo on the left side */}
         <div
-          className="fixed left-0 top-1/2 -translate-y-1/2 -translate-x-1/4 pointer-events-none z-50"
-          style={{ width: "60vw", opacity: "0.1" }}
+          className="fixed left-0 top-1/2 -translate-y-1/2 -translate-x-1/4"
+          style={{
+            width: "60vw",
+            opacity: "0.1",
+            pointerEvents: "none",
+            zIndex: 9999,
+          }}
         >
           <img src={echoLogo} alt="" className="w-full h-auto object-contain" />
-        </div>
-
-        {/* Decorative background elements */}
-        <div className="fixed inset-0 -z-10">
-          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-purple-100 rounded-full blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-200 rounded-full blur-3xl opacity-20 translate-y-1/2 -translate-x-1/2" />
         </div>
 
         {/* Top Navigation Header */}

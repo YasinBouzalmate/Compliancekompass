@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import jsPDF from "jspdf";
+import echoLogo from "../assets/compliance-kompass-logo.png";
 import {
   Tooltip,
   TooltipContent,
@@ -576,621 +577,647 @@ export function Panel3({ onBack }: Panel3Props) {
   };
 
   return (
-    <TooltipProvider>
-      <div className="max-w-5xl mx-auto">
-        {/* Title Section */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2">
-            <h2 className="text-slate-800 mb-2">Prioritert handlingsplan</h2>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button className="text-slate-400 hover:text-slate-600 transition-colors mb-2">
-                  <Info className="w-5 h-5" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent className="max-w-xs bg-white border border-slate-300 text-black">
-                <div className="space-y-2">
-                  <p className="font-semibold text-black">
-                    Om handlingsplanen:
-                  </p>
-                  <p className="text-sm text-slate-700">
-                    Tiltakene er organisert i tre kategorier basert på tidslinje
-                    og risiko:
-                  </p>
-                  <div className="space-y-1 mt-2">
-                    <div className="flex items-start gap-2">
-                      <div className="w-1 h-1 rounded-full bg-red-500 mt-2 flex-shrink-0" />
-                      <span className="text-xs text-slate-700">
-                        <strong className="text-black">
-                          Må før pilot 2026:
-                        </strong>{" "}
-                        Kritiske tiltak som må være på plass før pilot kan
-                        starte
-                      </span>
+    <>
+      {/* Watermark logo on the left side */}
+      <div
+        className="fixed left-0 top-1/2 -translate-y-1/2 -translate-x-1/4"
+        style={{
+          width: "60vw",
+          opacity: "0.1",
+          pointerEvents: "none",
+          zIndex: 9999,
+        }}
+      >
+        <img src={echoLogo} alt="" className="w-full h-auto object-contain" />
+      </div>
+
+      <TooltipProvider>
+        <div className="max-w-5xl mx-auto">
+          {
+            /* Title Section */
+            <div className="mb-8">
+              <div className="flex items-center gap-2">
+                <h2 className="text-slate-800 mb-2">
+                  Prioritert handlingsplan
+                </h2>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button className="text-slate-400 hover:text-slate-600 transition-colors mb-2">
+                      <Info className="w-5 h-5" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs bg-white border border-slate-300 text-black">
+                    <div className="space-y-2">
+                      <p className="font-semibold text-black">
+                        Om handlingsplanen:
+                      </p>
+                      <p className="text-sm text-slate-700">
+                        Tiltakene er organisert i tre kategorier basert på
+                        tidslinje og risiko:
+                      </p>
+                      <div className="space-y-1 mt-2">
+                        <div className="flex items-start gap-2">
+                          <div className="w-1 h-1 rounded-full bg-red-500 mt-2 flex-shrink-0" />
+                          <span className="text-xs text-slate-700">
+                            <strong className="text-black">
+                              Må før pilot 2026:
+                            </strong>{" "}
+                            Kritiske tiltak som må være på plass før pilot kan
+                            starte
+                          </span>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <div className="w-1 h-1 rounded-full bg-yellow-500 mt-2 flex-shrink-0" />
+                          <span className="text-xs text-slate-700">
+                            <strong className="text-black">
+                              Må før anbud:
+                            </strong>{" "}
+                            Tiltak som styrker konkurranseevne i anbudsprosesser
+                          </span>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <div className="w-1 h-1 rounded-full bg-green-500 mt-2 flex-shrink-0" />
+                          <span className="text-xs text-slate-700">
+                            <strong className="text-black">
+                              Kan tas senere:
+                            </strong>{" "}
+                            Forbedringstiltak uten akutt tidspress
+                          </span>
+                        </div>
+                      </div>
+                      <div className="border-t border-slate-200 pt-2 mt-2">
+                        <p className="text-xs text-slate-700">
+                          <strong className="text-black">Tips:</strong> Klikk på
+                          et tiltak for å se detaljert risikoinformasjon og
+                          relaterte krav.
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex items-start gap-2">
-                      <div className="w-1 h-1 rounded-full bg-yellow-500 mt-2 flex-shrink-0" />
-                      <span className="text-xs text-slate-700">
-                        <strong className="text-black">Må før anbud:</strong>{" "}
-                        Tiltak som styrker konkurranseevne i anbudsprosesser
-                      </span>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <div className="w-1 h-1 rounded-full bg-green-500 mt-2 flex-shrink-0" />
-                      <span className="text-xs text-slate-700">
-                        <strong className="text-black">Kan tas senere:</strong>{" "}
-                        Forbedringstiltak uten akutt tidspress
-                      </span>
-                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+              <p className="text-slate-600">
+                Konkrete tiltak prioritert etter risiko og tidslinje for pilot
+                og anbud.
+              </p>
+
+              {generatedActions && generatedActions.length > 0 && (
+                <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-4 flex items-start gap-3">
+                  <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Sparkles className="w-5 h-5 text-white" />
                   </div>
-                  <div className="border-t border-slate-200 pt-2 mt-2">
-                    <p className="text-xs text-slate-700">
-                      <strong className="text-black">Tips:</strong> Klikk på et
-                      tiltak for å se detaljert risikoinformasjon og relaterte
-                      krav.
+                  <div className="flex-1">
+                    <h4 className="text-green-900 mb-1">
+                      Automatisk generert plan
+                    </h4>
+                    <p className="text-green-800 text-sm">
+                      Denne handlingsplanen er automatisk generert basert på
+                      områder med lav compliance-score fra analysen. Tiltakene
+                      er prioritert etter alvorlighetsgrad og relaterte krav.
                     </p>
                   </div>
                 </div>
-              </TooltipContent>
-            </Tooltip>
-          </div>
-          <p className="text-slate-600">
-            Konkrete tiltak prioritert etter risiko og tidslinje for pilot og
-            anbud.
-          </p>
-
-          {generatedActions && generatedActions.length > 0 && (
-            <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-4 flex items-start gap-3">
-              <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
-                <Sparkles className="w-5 h-5 text-white" />
-              </div>
-              <div className="flex-1">
-                <h4 className="text-green-900 mb-1">
-                  Automatisk generert plan
-                </h4>
-                <p className="text-green-800 text-sm">
-                  Denne handlingsplanen er automatisk generert basert på områder
-                  med lav compliance-score fra analysen. Tiltakene er prioritert
-                  etter alvorlighetsgrad og relaterte krav.
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Search and Filter Bar */}
-        <div className="bg-white rounded-lg border border-slate-200 p-4 mb-6">
-          <div className="flex flex-wrap gap-3 items-center">
-            {/* Search */}
-            <div className="flex-1 min-w-[200px]">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Søk i tiltak..."
-                  className="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-              </div>
-            </div>
-
-            {/* Toggle filters */}
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 px-4 py-2 border rounded-lg text-sm transition-colors ${
-                showFilters
-                  ? "border-purple-500 bg-purple-50 text-purple-700"
-                  : "border-slate-300 text-slate-600 hover:bg-slate-50"
-              }`}
-            >
-              <SlidersHorizontal className="w-4 h-4" />
-              Filtre
-            </button>
-
-            {/* Results counter */}
-            <div className="text-sm text-slate-600">
-              {filteredTasks.length} av {allTasks.length} tiltak
-            </div>
-          </div>
-
-          {/* Expanded filters */}
-          {showFilters && (
-            <div className="mt-4 pt-4 border-t border-slate-200 flex flex-wrap gap-3 items-end">
-              {/* Priority filter */}
-              <div>
-                <label className="text-xs text-slate-600 mb-1 block">
-                  Prioritet
-                </label>
-                <select
-                  value={filterPriority}
-                  onChange={(e) => setFilterPriority(e.target.value)}
-                  className="px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                >
-                  <option value="all">Alle prioriteter</option>
-                  <option value="high">🔴 Høy</option>
-                  <option value="medium">🟡 Middels</option>
-                  <option value="low">🟢 Lav</option>
-                </select>
-              </div>
-
-              {/* Sort by */}
-              <div>
-                <label className="text-xs text-slate-600 mb-1 block">
-                  Sorter etter
-                </label>
-                <select
-                  value={sortBy}
-                  onChange={(e) =>
-                    setSortBy(
-                      e.target.value as "deadline" | "priority" | "responsible"
-                    )
-                  }
-                  className="px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                >
-                  <option value="priority">Prioritet</option>
-                  <option value="deadline">Frist</option>
-                  <option value="responsible">Ansvarlig</option>
-                </select>
-              </div>
-
-              {/* Clear filters */}
-              {hasActiveFilters && (
-                <button
-                  onClick={clearFilters}
-                  className="px-3 py-2 border border-slate-300 text-slate-700 rounded-lg text-sm hover:bg-slate-100 transition-colors flex items-center gap-2"
-                >
-                  <X className="w-4 h-4" />
-                  Nullstill
-                </button>
               )}
             </div>
-          )}
-        </div>
 
-        {/* Edit Mode Toggle Button - Prominent placement above tasks */}
-        <div className="mb-6">
-          <Button
-            onClick={() => setIsEditMode(!isEditMode)}
-            size="lg"
-            className={`w-full md:w-auto ${
-              isEditMode
-                ? "bg-purple-600 hover:bg-purple-700 text-white shadow-lg"
-                : "bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-lg hover:shadow-xl"
-            } transition-all duration-200`}
-          >
-            <Edit className="w-5 h-5 mr-2" />
-            {isEditMode
-              ? "✓ Ferdig med redigering"
-              : "Rediger og tilpass handlingsplan"}
-          </Button>
-          {isEditMode && (
-            <p className="text-sm text-purple-700 mt-2 ml-1">
-              💡 Klikk på blyant-ikonet for å redigere tiltak, eller søppelbøtte
-              for å slette. Klikk &apos;Legg til nytt tiltak&apos; nederst i
-              hver kategori.
-            </p>
-          )}
-        </div>
+            /* Search and Filter Bar */
+          }
+          <div className="bg-white rounded-lg border border-slate-200 p-4 mb-6">
+            <div className="flex flex-wrap gap-3 items-center">
+              {/* Search */}
+              <div className="flex-1 min-w-[200px]">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Søk i tiltak..."
+                    className="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+              </div>
 
-        {/* Tasks Grid */}
-        {CATEGORY_ORDER.length > 0 ? (
-          <div className="grid md:grid-cols-3 gap-6 mb-6">
-            {CATEGORY_ORDER.map((category) => {
-              const categoryTasks = groupedTasks[category] || [];
-              return (
-                <div
-                  key={category}
-                  className="bg-white rounded-lg border border-slate-200 overflow-hidden"
-                >
-                  <div className="bg-slate-100 px-4 py-3 border-b border-slate-200">
-                    <h3 className="text-slate-800">{category}</h3>
-                    <p className="text-sm text-slate-500">
-                      {categoryTasks.length} tiltak
-                    </p>
-                  </div>
-                  <div className="p-4 space-y-3">
-                    {categoryTasks.length > 0 ? (
-                      categoryTasks.map((task) => (
-                        <div key={task.id} className="relative">
-                          {isEditMode && (
-                            <div className="absolute -top-2 -right-2 flex gap-1 z-10">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleOpenEditDialog(task, category);
-                                }}
-                                className="bg-blue-600 text-white p-1.5 rounded-full hover:bg-blue-700 transition-colors shadow-md"
-                              >
-                                <Edit className="w-3 h-3" />
-                              </button>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDeleteTask(task.id, category);
-                                }}
-                                className="bg-red-600 text-white p-1.5 rounded-full hover:bg-red-700 transition-colors shadow-md"
-                              >
-                                <Trash2 className="w-3 h-3" />
-                              </button>
-                            </div>
-                          )}
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div
-                                className={`bg-white border-2 border-slate-200 rounded-lg p-4 hover:shadow-md transition-all cursor-pointer border-l-4 ${getPriorityColor(
-                                  task.priority
-                                )} ${
-                                  selectedTasks.includes(task.id)
-                                    ? "ring-2 ring-purple-500"
-                                    : ""
-                                }`}
-                                onClick={() => toggleTask(task.id)}
-                              >
-                                <div className="flex items-start justify-between gap-2 mb-3">
-                                  <p className="text-slate-800 flex-1">
-                                    {task.title}
-                                  </p>
-                                  <AlertTriangle
-                                    className={`w-4 h-4 flex-shrink-0 ${
-                                      task.priority === "high"
-                                        ? "text-red-500"
-                                        : task.priority === "medium"
-                                        ? "text-yellow-500"
-                                        : "text-green-500"
-                                    }`}
-                                  />
-                                </div>
+              {/* Toggle filters */}
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center gap-2 px-4 py-2 border rounded-lg text-sm transition-colors ${
+                  showFilters
+                    ? "border-purple-500 bg-purple-50 text-purple-700"
+                    : "border-slate-300 text-slate-600 hover:bg-slate-50"
+                }`}
+              >
+                <SlidersHorizontal className="w-4 h-4" />
+                Filtre
+              </button>
 
-                                {task.responsible && (
-                                  <div className="flex items-center gap-2 text-sm text-slate-600 mb-2">
-                                    <User className="w-4 h-4" />
-                                    <span>{task.responsible}</span>
-                                  </div>
-                                )}
+              {/* Results counter */}
+              <div className="text-sm text-slate-600">
+                {filteredTasks.length} av {allTasks.length} tiltak
+              </div>
+            </div>
 
-                                <div className="flex items-center gap-2 text-sm text-slate-600">
-                                  <Calendar className="w-4 h-4" />
-                                  <span>{task.deadline}</span>
-                                </div>
+            {/* Expanded filters */}
+            {showFilters && (
+              <div className="mt-4 pt-4 border-t border-slate-200 flex flex-wrap gap-3 items-end">
+                {/* Priority filter */}
+                <div>
+                  <label className="text-xs text-slate-600 mb-1 block">
+                    Prioritet
+                  </label>
+                  <select
+                    value={filterPriority}
+                    onChange={(e) => setFilterPriority(e.target.value)}
+                    className="px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  >
+                    <option value="all">Alle prioriteter</option>
+                    <option value="high">🔴 Høy</option>
+                    <option value="medium">🟡 Middels</option>
+                    <option value="low">🟢 Lav</option>
+                  </select>
+                </div>
+
+                {/* Sort by */}
+                <div>
+                  <label className="text-xs text-slate-600 mb-1 block">
+                    Sorter etter
+                  </label>
+                  <select
+                    value={sortBy}
+                    onChange={(e) =>
+                      setSortBy(
+                        e.target.value as
+                          | "deadline"
+                          | "priority"
+                          | "responsible"
+                      )
+                    }
+                    className="px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  >
+                    <option value="priority">Prioritet</option>
+                    <option value="deadline">Frist</option>
+                    <option value="responsible">Ansvarlig</option>
+                  </select>
+                </div>
+
+                {/* Clear filters */}
+                {hasActiveFilters && (
+                  <button
+                    onClick={clearFilters}
+                    className="px-3 py-2 border border-slate-300 text-slate-700 rounded-lg text-sm hover:bg-slate-100 transition-colors flex items-center gap-2"
+                  >
+                    <X className="w-4 h-4" />
+                    Nullstill
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Edit Mode Toggle Button - Prominent placement above tasks */}
+          <div className="mb-6">
+            <Button
+              onClick={() => setIsEditMode(!isEditMode)}
+              size="lg"
+              className={`w-full md:w-auto ${
+                isEditMode
+                  ? "bg-purple-600 hover:bg-purple-700 text-white shadow-lg"
+                  : "bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-lg hover:shadow-xl"
+              } transition-all duration-200`}
+            >
+              <Edit className="w-5 h-5 mr-2" />
+              {isEditMode
+                ? "✓ Ferdig med redigering"
+                : "Rediger og tilpass handlingsplan"}
+            </Button>
+            {isEditMode && (
+              <p className="text-sm text-purple-700 mt-2 ml-1">
+                💡 Klikk på blyant-ikonet for å redigere tiltak, eller
+                søppelbøtte for å slette. Klikk &apos;Legg til nytt tiltak&apos;
+                nederst i hver kategori.
+              </p>
+            )}
+          </div>
+
+          {/* Tasks Grid */}
+          {CATEGORY_ORDER.length > 0 ? (
+            <div className="grid md:grid-cols-3 gap-6 mb-6">
+              {CATEGORY_ORDER.map((category) => {
+                const categoryTasks = groupedTasks[category] || [];
+                return (
+                  <div
+                    key={category}
+                    className="bg-white rounded-lg border border-slate-200 overflow-hidden"
+                  >
+                    <div className="bg-slate-100 px-4 py-3 border-b border-slate-200">
+                      <h3 className="text-slate-800">{category}</h3>
+                      <p className="text-sm text-slate-500">
+                        {categoryTasks.length} tiltak
+                      </p>
+                    </div>
+                    <div className="p-4 space-y-3">
+                      {categoryTasks.length > 0 ? (
+                        categoryTasks.map((task) => (
+                          <div key={task.id} className="relative">
+                            {isEditMode && (
+                              <div className="absolute -top-2 -right-2 flex gap-1 z-10">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleOpenEditDialog(task, category);
+                                  }}
+                                  className="bg-blue-600 text-white p-1.5 rounded-full hover:bg-blue-700 transition-colors shadow-md"
+                                >
+                                  <Edit className="w-3 h-3" />
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteTask(task.id, category);
+                                  }}
+                                  className="bg-red-600 text-white p-1.5 rounded-full hover:bg-red-700 transition-colors shadow-md"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </button>
                               </div>
-                            </TooltipTrigger>
-                            <TooltipContent
-                              className="max-w-sm bg-white border border-slate-300 text-black"
-                              side="right"
-                            >
-                              <div className="space-y-3">
-                                <div>
-                                  <p className="font-semibold mb-1 text-black">
-                                    Risikonivå: {task.riskLevel}
-                                  </p>
-                                  <p className="text-sm text-slate-700">
-                                    {task.consequence}
-                                  </p>
-                                </div>
-                                <div className="border-t border-slate-200 pt-2">
-                                  <p className="font-semibold text-sm mb-1 text-black">
-                                    Påvirkning:
-                                  </p>
-                                  <p className="text-xs text-slate-700">
-                                    {task.impact}
-                                  </p>
-                                </div>
-                                <div className="border-t border-slate-200 pt-2">
-                                  <p className="font-semibold text-sm mb-1 text-black">
-                                    Relaterte krav:
-                                  </p>
-                                  <div className="flex flex-wrap gap-1">
-                                    {task.relatedFrameworks.map(
-                                      (framework, idx) => (
-                                        <span
-                                          key={idx}
-                                          className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded"
-                                        >
-                                          {framework}
-                                        </span>
-                                      )
-                                    )}
+                            )}
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div
+                                  className={`bg-white border-2 border-slate-200 rounded-lg p-4 hover:shadow-md transition-all cursor-pointer border-l-4 ${getPriorityColor(
+                                    task.priority
+                                  )} ${
+                                    selectedTasks.includes(task.id)
+                                      ? "ring-2 ring-purple-500"
+                                      : ""
+                                  }`}
+                                  onClick={() => toggleTask(task.id)}
+                                >
+                                  <div className="flex items-start justify-between gap-2 mb-3">
+                                    <p className="text-slate-800 flex-1">
+                                      {task.title}
+                                    </p>
+                                    <AlertTriangle
+                                      className={`w-4 h-4 flex-shrink-0 ${
+                                        task.priority === "high"
+                                          ? "text-red-500"
+                                          : task.priority === "medium"
+                                          ? "text-yellow-500"
+                                          : "text-green-500"
+                                      }`}
+                                    />
+                                  </div>
+
+                                  {task.responsible && (
+                                    <div className="flex items-center gap-2 text-sm text-slate-600 mb-2">
+                                      <User className="w-4 h-4" />
+                                      <span>{task.responsible}</span>
+                                    </div>
+                                  )}
+
+                                  <div className="flex items-center gap-2 text-sm text-slate-600">
+                                    <Calendar className="w-4 h-4" />
+                                    <span>{task.deadline}</span>
                                   </div>
                                 </div>
-                              </div>
-                            </TooltipContent>
-                          </Tooltip>
+                              </TooltipTrigger>
+                              <TooltipContent
+                                className="max-w-sm bg-white border border-slate-300 text-black"
+                                side="right"
+                              >
+                                <div className="space-y-3">
+                                  <div>
+                                    <p className="font-semibold mb-1 text-black">
+                                      Risikonivå: {task.riskLevel}
+                                    </p>
+                                    <p className="text-sm text-slate-700">
+                                      {task.consequence}
+                                    </p>
+                                  </div>
+                                  <div className="border-t border-slate-200 pt-2">
+                                    <p className="font-semibold text-sm mb-1 text-black">
+                                      Påvirkning:
+                                    </p>
+                                    <p className="text-xs text-slate-700">
+                                      {task.impact}
+                                    </p>
+                                  </div>
+                                  <div className="border-t border-slate-200 pt-2">
+                                    <p className="font-semibold text-sm mb-1 text-black">
+                                      Relaterte krav:
+                                    </p>
+                                    <div className="flex flex-wrap gap-1">
+                                      {task.relatedFrameworks.map(
+                                        (framework, idx) => (
+                                          <span
+                                            key={idx}
+                                            className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded"
+                                          >
+                                            {framework}
+                                          </span>
+                                        )
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-sm text-slate-500 border border-dashed border-slate-200 rounded-lg p-4 text-center">
+                          Ingen tiltak i denne kategorien ennå.
                         </div>
-                      ))
-                    ) : (
-                      <div className="text-sm text-slate-500 border border-dashed border-slate-200 rounded-lg p-4 text-center">
-                        Ingen tiltak i denne kategorien ennå.
+                      )}
+                    </div>
+                    {isEditMode && (
+                      <div className="p-4">
+                        <Button
+                          onClick={() => handleOpenNewTaskDialog(category)}
+                          variant="outline"
+                          className="w-full"
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          Legg til nytt tiltak
+                        </Button>
                       </div>
                     )}
                   </div>
-                  {isEditMode && (
-                    <div className="p-4">
-                      <Button
-                        onClick={() => handleOpenNewTaskDialog(category)}
-                        variant="outline"
-                        className="w-full"
-                      >
-                        <Plus className="w-4 h-4 mr-2" />
-                        Legg til nytt tiltak
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="bg-white rounded-lg border border-slate-200 p-12 mb-6 text-center">
-            <Search className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-            <p className="text-slate-600 mb-2">Ingen tiltak matcher søket</p>
-            <p className="text-sm text-slate-500 mb-4">
-              Prøv å endre søkeord eller filtre
+                );
+              })}
+            </div>
+          ) : (
+            <div className="bg-white rounded-lg border border-slate-200 p-12 mb-6 text-center">
+              <Search className="w-12 h-12 mx-auto mb-3 text-slate-300" />
+              <p className="text-slate-600 mb-2">Ingen tiltak matcher søket</p>
+              <p className="text-sm text-slate-500 mb-4">
+                Prøv å endre søkeord eller filtre
+              </p>
+              <button
+                onClick={clearFilters}
+                className="text-purple-600 hover:text-purple-700 text-sm"
+              >
+                Nullstill filtre
+              </button>
+            </div>
+          )}
+
+          {/* Info Box */}
+          <div className="bg-purple-50 border border-purple-200 rounded-lg p-6 mb-6">
+            <h4 className="text-purple-900 mb-2">Levende handlingsplan</h4>
+            <p className="text-purple-800">
+              Handlingsplanen kan oppdateres kontinuerlig når nye krav eller
+              standarder innføres. Du får alltid en konkret to-do-liste i stedet
+              for bare en rapport.
             </p>
+          </div>
+
+          {/* Summary Stats */}
+          <div className="grid grid-cols-3 gap-4 mb-8">
+            <div className="bg-white rounded-lg border border-slate-200 p-4 text-center">
+              <div className="text-slate-800">{allTasks.length}</div>
+              <p className="text-sm text-slate-600">Totalt tiltak</p>
+            </div>
+            <div className="bg-white rounded-lg border border-slate-200 p-4 text-center">
+              <div className="text-slate-800">
+                {
+                  allTasks.filter(
+                    (t) => t.priority === "high" || t.priority === "medium"
+                  ).length
+                }
+              </div>
+              <p className="text-sm text-slate-600">Høy/middels prioritet</p>
+            </div>
+            <div className="bg-white rounded-lg border border-slate-200 p-4 text-center">
+              <div className="text-slate-800">{selectedTasks.length}</div>
+              <p className="text-sm text-slate-600">Valgte tiltak</p>
+            </div>
+          </div>
+
+          {/* Email Notification Section */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Bell className="w-6 h-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <h4 className="text-blue-900 mb-2">Få varsler om endringer</h4>
+                <p className="text-blue-800 text-sm mb-4">
+                  Motta e-postvarsel når tiltak endrer status, eller når nye
+                  tiltak legges til i handlingsplanen.
+                </p>
+
+                {!emailSubmitted ? (
+                  <form onSubmit={handleEmailSubmit} className="flex gap-3">
+                    <input
+                      type="email"
+                      value={notificationEmail}
+                      onChange={(e) => setNotificationEmail(e.target.value)}
+                      placeholder="din@epost.no"
+                      className="flex-1 px-4 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                      required
+                    />
+                    <button
+                      type="submit"
+                      className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 whitespace-nowrap"
+                    >
+                      <Bell className="w-4 h-4" />
+                      Få varsler
+                    </button>
+                  </form>
+                ) : (
+                  <div className="bg-green-100 border border-green-300 rounded-lg px-4 py-3 flex items-center gap-2">
+                    <div className="w-5 h-5 bg-green-600 rounded-full flex items-center justify-center">
+                      <svg
+                        className="w-3 h-3 text-white"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={3}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <p className="text-green-800">
+                      Varsler aktivert! Du vil motta e-post ved endringer.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex justify-between">
             <button
-              onClick={clearFilters}
-              className="text-purple-600 hover:text-purple-700 text-sm"
+              onClick={onBack}
+              className="px-6 py-3 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2"
             >
-              Nullstill filtre
+              <ArrowLeft className="w-5 h-5" />
+              Tilbake
+            </button>
+            <button
+              onClick={handleExportPDF}
+              className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+            >
+              <Download className="w-5 h-5" />
+              Eksporter til PDF
             </button>
           </div>
-        )}
 
-        {/* Info Box */}
-        <div className="bg-purple-50 border border-purple-200 rounded-lg p-6 mb-6">
-          <h4 className="text-purple-900 mb-2">Levende handlingsplan</h4>
-          <p className="text-purple-800">
-            Handlingsplanen kan oppdateres kontinuerlig når nye krav eller
-            standarder innføres. Du får alltid en konkret to-do-liste i stedet
-            for bare en rapport.
-          </p>
-        </div>
-
-        {/* Summary Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          <div className="bg-white rounded-lg border border-slate-200 p-4 text-center">
-            <div className="text-slate-800">{allTasks.length}</div>
-            <p className="text-sm text-slate-600">Totalt tiltak</p>
-          </div>
-          <div className="bg-white rounded-lg border border-slate-200 p-4 text-center">
-            <div className="text-slate-800">
-              {
-                allTasks.filter(
-                  (t) => t.priority === "high" || t.priority === "medium"
-                ).length
-              }
-            </div>
-            <p className="text-sm text-slate-600">Høy/middels prioritet</p>
-          </div>
-          <div className="bg-white rounded-lg border border-slate-200 p-4 text-center">
-            <div className="text-slate-800">{selectedTasks.length}</div>
-            <p className="text-sm text-slate-600">Valgte tiltak</p>
-          </div>
-        </div>
-
-        {/* Email Notification Section */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
-              <Bell className="w-6 h-6 text-white" />
-            </div>
-            <div className="flex-1">
-              <h4 className="text-blue-900 mb-2">Få varsler om endringer</h4>
-              <p className="text-blue-800 text-sm mb-4">
-                Motta e-postvarsel når tiltak endrer status, eller når nye
-                tiltak legges til i handlingsplanen.
-              </p>
-
-              {!emailSubmitted ? (
-                <form onSubmit={handleEmailSubmit} className="flex gap-3">
-                  <input
-                    type="email"
-                    value={notificationEmail}
-                    onChange={(e) => setNotificationEmail(e.target.value)}
-                    placeholder="din@epost.no"
-                    className="flex-1 px-4 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                    required
+          {/* Edit Task Dialog */}
+          <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>
+                  {isNewTask ? "Legg til nytt tiltak" : "Rediger tiltak"}
+                </DialogTitle>
+                <DialogDescription>
+                  {isNewTask
+                    ? "Oppgi detaljer for det nye tiltaket."
+                    : "Oppgi nye detaljer for tiltaket."}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2">
+                  <Label htmlFor="title">Tittel</Label>
+                  <Input
+                    id="title"
+                    value={formData.title}
+                    onChange={(e) =>
+                      setFormData({ ...formData, title: e.target.value })
+                    }
+                    className="col-span-2"
                   />
-                  <button
-                    type="submit"
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 whitespace-nowrap"
-                  >
-                    <Bell className="w-4 h-4" />
-                    Få varsler
-                  </button>
-                </form>
-              ) : (
-                <div className="bg-green-100 border border-green-300 rounded-lg px-4 py-3 flex items-center gap-2">
-                  <div className="w-5 h-5 bg-green-600 rounded-full flex items-center justify-center">
-                    <svg
-                      className="w-3 h-3 text-white"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={3}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  </div>
-                  <p className="text-green-800">
-                    Varsler aktivert! Du vil motta e-post ved endringer.
-                  </p>
                 </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex justify-between">
-          <button
-            onClick={onBack}
-            className="px-6 py-3 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            Tilbake
-          </button>
-          <button
-            onClick={handleExportPDF}
-            className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
-          >
-            <Download className="w-5 h-5" />
-            Eksporter til PDF
-          </button>
-        </div>
-
-        {/* Edit Task Dialog */}
-        <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>
-                {isNewTask ? "Legg til nytt tiltak" : "Rediger tiltak"}
-              </DialogTitle>
-              <DialogDescription>
-                {isNewTask
-                  ? "Oppgi detaljer for det nye tiltaket."
-                  : "Oppgi nye detaljer for tiltaket."}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
-                <Label htmlFor="title">Tittel</Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
-                  className="col-span-2"
-                />
+                <div className="col-span-2">
+                  <Label htmlFor="responsible">Ansvarlig</Label>
+                  <Input
+                    id="responsible"
+                    value={formData.responsible}
+                    onChange={(e) =>
+                      setFormData({ ...formData, responsible: e.target.value })
+                    }
+                    className="col-span-2"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <Label htmlFor="deadline">Frist</Label>
+                  <Input
+                    id="deadline"
+                    value={formData.deadline}
+                    onChange={(e) =>
+                      setFormData({ ...formData, deadline: e.target.value })
+                    }
+                    className="col-span-2"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <Label htmlFor="priority">Prioritet</Label>
+                  <select
+                    id="priority"
+                    value={formData.priority}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        priority: e.target.value as "high" | "medium" | "low",
+                      })
+                    }
+                    className="px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 w-full"
+                  >
+                    <option value="high">Høy</option>
+                    <option value="medium">Middels</option>
+                    <option value="low">Lav</option>
+                  </select>
+                </div>
+                <div className="col-span-2">
+                  <Label htmlFor="category">Kategori</Label>
+                  <select
+                    id="category"
+                    value={formData.category}
+                    onChange={(e) =>
+                      setFormData({ ...formData, category: e.target.value })
+                    }
+                    className="px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 w-full"
+                  >
+                    <option value="Må før pilot 2026">Må før pilot 2026</option>
+                    <option value="Må før anbud">Må før anbud</option>
+                    <option value="Kan tas senere">Kan tas senere</option>
+                  </select>
+                </div>
+                <div className="col-span-2">
+                  <Label htmlFor="riskLevel">Risikonivå</Label>
+                  <Input
+                    id="riskLevel"
+                    value={formData.riskLevel}
+                    onChange={(e) =>
+                      setFormData({ ...formData, riskLevel: e.target.value })
+                    }
+                    className="col-span-2"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <Label htmlFor="consequence">Konsekvens</Label>
+                  <Textarea
+                    id="consequence"
+                    value={formData.consequence}
+                    onChange={(e) =>
+                      setFormData({ ...formData, consequence: e.target.value })
+                    }
+                    className="col-span-2"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <Label htmlFor="relatedFrameworks">
+                    Relaterte rammer (kommaseparert)
+                  </Label>
+                  <Input
+                    id="relatedFrameworks"
+                    value={formData.relatedFrameworks}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        relatedFrameworks: e.target.value,
+                      })
+                    }
+                    placeholder="ISO 27001 A.9.1.1, Normen Krav 2.1"
+                    className="col-span-2"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <Label htmlFor="impact">Påvirkning</Label>
+                  <Textarea
+                    id="impact"
+                    value={formData.impact}
+                    onChange={(e) =>
+                      setFormData({ ...formData, impact: e.target.value })
+                    }
+                    className="col-span-2"
+                  />
+                </div>
               </div>
-              <div className="col-span-2">
-                <Label htmlFor="responsible">Ansvarlig</Label>
-                <Input
-                  id="responsible"
-                  value={formData.responsible}
-                  onChange={(e) =>
-                    setFormData({ ...formData, responsible: e.target.value })
-                  }
-                  className="col-span-2"
-                />
-              </div>
-              <div className="col-span-2">
-                <Label htmlFor="deadline">Frist</Label>
-                <Input
-                  id="deadline"
-                  value={formData.deadline}
-                  onChange={(e) =>
-                    setFormData({ ...formData, deadline: e.target.value })
-                  }
-                  className="col-span-2"
-                />
-              </div>
-              <div className="col-span-2">
-                <Label htmlFor="priority">Prioritet</Label>
-                <select
-                  id="priority"
-                  value={formData.priority}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      priority: e.target.value as "high" | "medium" | "low",
-                    })
-                  }
-                  className="px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 w-full"
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => setEditDialogOpen(false)}
                 >
-                  <option value="high">Høy</option>
-                  <option value="medium">Middels</option>
-                  <option value="low">Lav</option>
-                </select>
-              </div>
-              <div className="col-span-2">
-                <Label htmlFor="category">Kategori</Label>
-                <select
-                  id="category"
-                  value={formData.category}
-                  onChange={(e) =>
-                    setFormData({ ...formData, category: e.target.value })
-                  }
-                  className="px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 w-full"
+                  Avbryt
+                </Button>
+                <Button
+                  onClick={handleSaveTask}
+                  className="bg-green-600 hover:bg-green-700"
                 >
-                  <option value="Må før pilot 2026">Må før pilot 2026</option>
-                  <option value="Må før anbud">Må før anbud</option>
-                  <option value="Kan tas senere">Kan tas senere</option>
-                </select>
-              </div>
-              <div className="col-span-2">
-                <Label htmlFor="riskLevel">Risikonivå</Label>
-                <Input
-                  id="riskLevel"
-                  value={formData.riskLevel}
-                  onChange={(e) =>
-                    setFormData({ ...formData, riskLevel: e.target.value })
-                  }
-                  className="col-span-2"
-                />
-              </div>
-              <div className="col-span-2">
-                <Label htmlFor="consequence">Konsekvens</Label>
-                <Textarea
-                  id="consequence"
-                  value={formData.consequence}
-                  onChange={(e) =>
-                    setFormData({ ...formData, consequence: e.target.value })
-                  }
-                  className="col-span-2"
-                />
-              </div>
-              <div className="col-span-2">
-                <Label htmlFor="relatedFrameworks">
-                  Relaterte rammer (kommaseparert)
-                </Label>
-                <Input
-                  id="relatedFrameworks"
-                  value={formData.relatedFrameworks}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      relatedFrameworks: e.target.value,
-                    })
-                  }
-                  placeholder="ISO 27001 A.9.1.1, Normen Krav 2.1"
-                  className="col-span-2"
-                />
-              </div>
-              <div className="col-span-2">
-                <Label htmlFor="impact">Påvirkning</Label>
-                <Textarea
-                  id="impact"
-                  value={formData.impact}
-                  onChange={(e) =>
-                    setFormData({ ...formData, impact: e.target.value })
-                  }
-                  className="col-span-2"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setEditDialogOpen(false)}
-              >
-                Avbryt
-              </Button>
-              <Button
-                onClick={handleSaveTask}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                Lagre
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
-    </TooltipProvider>
+                  Lagre
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </TooltipProvider>
+    </>
   );
 }
