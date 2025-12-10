@@ -13,7 +13,6 @@ import {
   User,
   LogIn,
 } from "lucide-react";
-import complianceLogo from "../assets/compliance-kompass-logo.png";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
@@ -30,6 +29,7 @@ import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { ScrollToTop } from "./ScrollToTop";
 import { useState } from "react";
+import echoLogo from "../assets/compliance-kompass-logo.png";
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -63,15 +63,16 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
   };
 
   return (
-    <div
-      style={{
-        backgroundImage: `url(${complianceLogo})`,
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
-        backgroundSize: "contain",
-      }}
-    >
-      <div className="min-h-screen bg-white overflow-hidden">
+    <>
+      <div className="min-h-screen bg-white overflow-hidden relative">
+        {/* Watermark logo on the left side */}
+        <div
+          className="fixed left-0 top-1/2 -translate-y-1/2 -translate-x-1/4 pointer-events-none z-50"
+          style={{ width: "60vw", opacity: "0.1" }}
+        >
+          <img src={echoLogo} alt="" className="w-full h-auto object-contain" />
+        </div>
+
         {/* Decorative background elements */}
         <div className="fixed inset-0 -z-10">
           <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-purple-100 rounded-full blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2" />
@@ -79,16 +80,16 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
         </div>
 
         {/* Top Navigation Header */}
-        <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-200/50 shadow-sm">
+        <header className="top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-200/50 shadow-sm fixed w-full">
           <div className="max-w-7xl mx-auto px-8 py-4">
             <div className="flex items-center justify-between">
               {/* Logo */}
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg overflow-hidden bg-white shadow-inner">
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden">
                   <img
-                    src={complianceLogo}
-                    alt="Compliance-kompass logo"
-                    className="h-full w-full object-cover"
+                    src={echoLogo}
+                    alt="Echomedic Logo"
+                    className="w-full h-full object-contain"
                   />
                 </div>
                 <div>
@@ -113,7 +114,7 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
         </header>
 
         {/* Hero Section */}
-        <div className="max-w-7xl mx-auto px-8 pt-24 pb-32">
+        <div className="relative z-10 max-w-7xl mx-auto px-8 pt-24 pb-32">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
             {/* Left side - Content */}
             <div>
@@ -211,7 +212,7 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
         </div>
 
         {/* How it works - Timeline style */}
-        <div className="bg-slate-50 py-24" id="how-it-works">
+        <div className="relative z-10 bg-slate-50 py-24" id="how-it-works">
           <div className="max-w-7xl mx-auto px-8">
             <div className="text-center mb-20">
               <Badge className="bg-purple-100 text-purple-700 border-purple-200 mb-6">
@@ -276,7 +277,7 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
         </div>
 
         {/* Benefits Grid */}
-        <div className="py-24 bg-white">
+        <div className="relative z-10 py-24 bg-white">
           <div className="max-w-7xl mx-auto px-8">
             <div className="text-center mb-20">
               <Badge className="bg-purple-100 text-purple-700 border-purple-200 mb-6">
@@ -334,7 +335,7 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
         </div>
 
         {/* About Section */}
-        <div className="py-24 bg-slate-50">
+        <div className="relative z-10 py-24 bg-slate-50">
           <div className="max-w-7xl mx-auto px-8">
             <div className="grid lg:grid-cols-2 gap-16 items-start">
               {/* Left side - Content */}
@@ -446,7 +447,7 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
         </div>
 
         {/* CTA Section */}
-        <div className="bg-gradient-to-br from-purple-600 via-purple-700 to-purple-800 py-24">
+        <div className="relative z-10 bg-gradient-to-br from-purple-600 via-purple-700 to-purple-800 py-24">
           <div className="max-w-4xl mx-auto px-8 text-center">
             <h2 className="text-white mb-6">
               Klar til å ta kontroll over compliance?
@@ -592,14 +593,22 @@ export function LandingPage({ onGetStarted, onLoginClick }: LandingPageProps) {
                   )}
                 </DialogContent>
               </Dialog>
+              {onLoginClick && (
+                <Button
+                  onClick={onLoginClick}
+                  className="bg-white text-purple-600 hover:bg-purple-50 px-8 py-6 shadow-xl"
+                >
+                  Logg inn
+                  <LogIn className="ml-2 h-5 w-5" />
+                </Button>
+              )}
             </div>
           </div>
         </div>
 
         {/* Scroll to Top Button */}
-        {/* Scroll to Top Button */}
         <ScrollToTop />
       </div>
-    </div>
+    </>
   );
 }

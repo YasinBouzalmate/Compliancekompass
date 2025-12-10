@@ -33,7 +33,7 @@ export default function App() {
   const [currentStep, setCurrentStep] = useState(1);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [showInactivityWarning, setShowInactivityWarning] = useState(false);
-const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Check if user is already logged in on mount
   useEffect(() => {
@@ -47,7 +47,9 @@ const [isLoading, setIsLoading] = useState(true);
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         setCurrentUser(session.user);
         setIsAuthenticated(true);
@@ -74,7 +76,8 @@ const [isLoading, setIsLoading] = useState(true);
   const handleInactivityLogout = async () => {
     await handleLogout();
     toast.error("Du ble logget ut på grunn av inaktivitet", {
-      description: "For sikkerhetsmessige årsaker logger vi deg ut etter 15 minutter uten aktivitet."
+      description:
+        "For sikkerhetsmessige årsaker logger vi deg ut etter 15 minutter uten aktivitet.",
     });
   };
 
@@ -110,15 +113,13 @@ const [isLoading, setIsLoading] = useState(true);
 
   // Show test guide if activated
   if (showTestGuide) {
-    return (
-      <UserTestGuide onClose={() => setShowTestGuide(false)} />
-    );
+    return <UserTestGuide onClose={() => setShowTestGuide(false)} />;
   }
 
   // Show login page if user clicked "Get Started" but not authenticated
   if (showLogin && !isAuthenticated) {
     return (
-      <LoginPage 
+      <LoginPage
         onLoginSuccess={() => {
           setShowLogin(false);
           setShowApp(true);
@@ -143,7 +144,7 @@ const [isLoading, setIsLoading] = useState(true);
   // Show landing page if app hasn't started
   if (!showApp) {
     return (
-      <LandingPage 
+      <LandingPage
         onGetStarted={handleStartOrLogin}
         onLoginClick={handleStartOrLogin}
       />
@@ -164,7 +165,7 @@ const [isLoading, setIsLoading] = useState(true);
           <div className="max-w-7xl mx-auto px-8 py-7">
             <div className="flex items-center justify-between">
               {/* Logo/Home button - clickable */}
-              <button 
+              <button
                 onClick={handleBackToLanding}
                 className="group flex flex-col hover:opacity-80 transition-opacity"
               >
@@ -173,9 +174,7 @@ const [isLoading, setIsLoading] = useState(true);
                     <ArrowLeft className="h-5 w-5 text-white" />
                   </div>
                   <div className="text-left">
-                    <h1 className="text-purple-600">
-                      Compliance-kompass
-                    </h1>
+                    <h1 className="text-purple-600">Compliance-kompass</h1>
                     <p className="text-slate-600 mt-0.5 text-sm">Echomedic</p>
                   </div>
                 </div>
@@ -183,7 +182,7 @@ const [isLoading, setIsLoading] = useState(true);
                   ← Klikk for å gå til forsiden
                 </p>
               </button>
-              
+
               {/* Right side buttons */}
               <div className="flex gap-3">
                 <Button
@@ -264,41 +263,48 @@ const [isLoading, setIsLoading] = useState(true);
 
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-8 py-14">
-          {currentStep === 1 && (
-            <Panel1 onNext={() => setCurrentStep(2)} />
-          )}
+          {currentStep === 1 && <Panel1 onNext={() => setCurrentStep(2)} />}
           {currentStep === 2 && (
             <Panel2
               onNext={() => setCurrentStep(3)}
               onBack={() => setCurrentStep(1)}
             />
           )}
-          {currentStep === 3 && (
-            <Panel3 onBack={() => setCurrentStep(2)} />
-          )}
+          {currentStep === 3 && <Panel3 onBack={() => setCurrentStep(2)} />}
         </main>
 
         {/* Inactivity Warning Dialog */}
-        <AlertDialog open={showInactivityWarning} onOpenChange={setShowInactivityWarning}>
+        <AlertDialog
+          open={showInactivityWarning}
+          onOpenChange={setShowInactivityWarning}
+        >
           <AlertDialogContent className="max-w-md">
             <AlertDialogHeader>
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
                   <AlertTriangle className="w-6 h-6 text-yellow-600" />
                 </div>
-                <AlertDialogTitle className="text-xl">Advarsel om inaktivitet</AlertDialogTitle>
+                <AlertDialogTitle className="text-xl">
+                  Advarsel om inaktivitet
+                </AlertDialogTitle>
               </div>
               <AlertDialogDescription className="text-base">
-                Du har vært inaktiv i 14 minutter. Du vil bli logget ut om <span className="font-bold text-red-600">1 minutt</span> hvis du ikke gjør noe.
-                <br /><br />
+                Du har vært inaktiv i 14 minutter. Du vil bli logget ut om{" "}
+                <span className="font-bold text-red-600">1 minutt</span> hvis du
+                ikke gjør noe.
+                <br />
+                <br />
                 Dette er en sikkerhetsfunksjon for å beskytte dine data.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel onClick={handleLogout} className="bg-slate-100 hover:bg-slate-200">
+              <AlertDialogCancel
+                onClick={handleLogout}
+                className="bg-slate-100 hover:bg-slate-200"
+              >
                 Logg ut nå
               </AlertDialogCancel>
-              <AlertDialogAction 
+              <AlertDialogAction
                 onClick={handleStayLoggedIn}
                 className="bg-purple-600 hover:bg-purple-700 text-white"
               >
