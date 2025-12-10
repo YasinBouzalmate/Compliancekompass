@@ -1,4 +1,14 @@
-import { Upload, CheckCircle2, Info, Loader2, CheckSquare, Square, Plus, X, AlertCircle } from "lucide-react";
+import {
+  Upload,
+  CheckCircle2,
+  Info,
+  Loader2,
+  CheckSquare,
+  Square,
+  Plus,
+  X,
+  AlertCircle,
+} from "lucide-react";
 import { useState } from "react";
 import {
   Tooltip,
@@ -7,23 +17,24 @@ import {
   TooltipTrigger,
 } from "./ui/tooltip";
 import { toast } from "sonner";
+import echoLogo from "../assets/compliance-kompass-logo.png";
 
 interface Panel1Props {
   onNext: () => void;
 }
 
 export function Panel1({ onNext }: Panel1Props) {
-  const [selectedFrameworks, setSelectedFrameworks] = useState<
-    string[]
-  >([]);
+  const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [customFrameworks, setCustomFrameworks] = useState<Array<{
-    id: string;
-    label: string;
-    desc: string;
-    details: string;
-  }>>([]);
+  const [customFrameworks, setCustomFrameworks] = useState<
+    Array<{
+      id: string;
+      label: string;
+      desc: string;
+      details: string;
+    }>
+  >([]);
   const [newFrameworkName, setNewFrameworkName] = useState("");
   const [showAddFramework, setShowAddFramework] = useState(false);
   const [showValidationError, setShowValidationError] = useState(false);
@@ -70,12 +81,12 @@ export function Panel1({ onNext }: Panel1Props) {
     setSelectedFrameworks((prev) =>
       prev.includes(framework)
         ? prev.filter((f) => f !== framework)
-        : [...prev, framework],
+        : [...prev, framework]
     );
   };
 
   const selectAllFrameworks = () => {
-    setSelectedFrameworks(frameworks.map(f => f.id));
+    setSelectedFrameworks(frameworks.map((f) => f.id));
   };
 
   const clearAllFrameworks = () => {
@@ -95,7 +106,7 @@ export function Panel1({ onNext }: Panel1Props) {
       setSelectedFrameworks([...selectedFrameworks, customId]);
       setNewFrameworkName("");
       setShowAddFramework(false);
-      
+
       toast.success("Rammeverk lagt til!", {
         description: `${newFrameworkName.trim()} er nå tilgjengelig.`,
         duration: 3000,
@@ -104,8 +115,8 @@ export function Panel1({ onNext }: Panel1Props) {
   };
 
   const removeCustomFramework = (id: string) => {
-    setCustomFrameworks(customFrameworks.filter(f => f.id !== id));
-    setSelectedFrameworks(selectedFrameworks.filter(f => f !== id));
+    setCustomFrameworks(customFrameworks.filter((f) => f.id !== id));
+    setSelectedFrameworks(selectedFrameworks.filter((f) => f !== id));
   };
 
   const allFrameworks = [...frameworks, ...customFrameworks];
@@ -114,7 +125,8 @@ export function Panel1({ onNext }: Panel1Props) {
     if (selectedFrameworks.length === 0) {
       setShowValidationError(true);
       toast.error("Velg minst ett rammeverk", {
-        description: "Du må velge minst ett compliance-rammeverk for å fortsette.",
+        description:
+          "Du må velge minst ett compliance-rammeverk for å fortsette.",
         duration: 4000,
       });
       return;
@@ -130,12 +142,12 @@ export function Panel1({ onNext }: Panel1Props) {
     } else {
       // Start upload process
       setIsUploading(true);
-      
+
       // Simulate upload time (2-3 seconds)
       setTimeout(() => {
         setIsUploading(false);
         setUploadedFiles(true);
-        
+
         // Show success toast
         toast.success("Dokumenter lastet opp!", {
           description: "3 filer ble lastet opp og analysert.",
@@ -146,266 +158,267 @@ export function Panel1({ onNext }: Panel1Props) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      {/* Title Section */}
-      <div className="mb-10">
-        <h2 className="text-slate-800 mb-3">
-          Velg rammeverk og del informasjon
-        </h2>
-        <p className="text-slate-600 text-lg">
-          Velg ett eller flere compliance-rammeverk som er relevante for
-          din virksomhet og last opp eksisterende dokumentasjon.
-        </p>
+    <>
+      {/* Watermark logo on the left side */}
+      <div
+        className="fixed left-0 top-1/2 -translate-y-1/2 -translate-x-1/4"
+        style={{
+          width: "60vw",
+          opacity: "0.1",
+          pointerEvents: "none",
+          zIndex: 9999,
+        }}
+      >
+        <img src={echoLogo} alt="" className="w-full h-auto object-contain" />
       </div>
 
-      <TooltipProvider>
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Left Column - Frameworks */}
-          <div className="bg-white rounded-xl border border-slate-200 p-8 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <h3 className="text-slate-800">
-                  Velg relevante rammeverk
-                </h3>
+      <div className="max-w-4xl mx-auto">
+        {/* Title Section */}
+        <div className="mb-10">
+          <h2 className="text-slate-800 mb-3">
+            Velg rammeverk og del informasjon
+          </h2>
+          <p className="text-slate-600 text-lg">
+            Velg ett eller flere compliance-rammeverk som er relevante for din
+            virksomhet og last opp eksisterende dokumentasjon.
+          </p>
+        </div>
+
+        <TooltipProvider>
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Left Column - Frameworks */}
+            <div className="bg-white rounded-xl border border-slate-200 p-8 shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <h3 className="text-slate-800">Velg relevante rammeverk</h3>
+                  {selectedFrameworks.length > 0 && (
+                    <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">
+                      {selectedFrameworks.length} valgt
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Validation message */}
+              {showValidationError && selectedFrameworks.length === 0 && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-red-800">
+                      Du må velge minst ett rammeverk for å fortsette
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Select All / Clear All buttons */}
+              <div className="flex gap-2 mb-5">
+                <button
+                  onClick={selectAllFrameworks}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-purple-200 text-purple-700 rounded-lg hover:bg-purple-50 transition-colors"
+                >
+                  <CheckSquare className="w-4 h-4" />
+                  Velg alle
+                </button>
                 {selectedFrameworks.length > 0 && (
-                  <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">
-                    {selectedFrameworks.length} valgt
-                  </span>
+                  <button
+                    onClick={clearAllFrameworks}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors"
+                  >
+                    <Square className="w-4 h-4" />
+                    Fjern alle
+                  </button>
+                )}
+              </div>
+
+              <div className="space-y-3 mb-6">
+                {allFrameworks.map((framework) => {
+                  const isCustom = framework.id.startsWith("custom_");
+                  return (
+                    <label
+                      key={framework.id}
+                      className={`flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        selectedFrameworks.includes(framework.id)
+                          ? "border-purple-500 bg-purple-50"
+                          : "border-slate-200 hover:border-slate-300"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedFrameworks.includes(framework.id)}
+                        onChange={() => toggleFramework(framework.id)}
+                        className="mt-1 w-5 h-5 rounded border-2 border-slate-300 bg-white checked:bg-white checked:border-purple-600 checked:accent-purple-600 focus:ring-2 focus:ring-purple-200 focus:ring-offset-0 cursor-pointer"
+                      />
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-slate-800">
+                            {framework.label}
+                          </span>
+                          {isCustom && (
+                            <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs">
+                              Tilpasset
+                            </span>
+                          )}
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button
+                                type="button"
+                                onClick={(e) => e.preventDefault()}
+                                className="text-slate-400 hover:text-slate-600 transition-colors"
+                              >
+                                <Info className="w-4 h-4" />
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-xs">
+                              <p className="text-sm">{framework.details}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                          {isCustom && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                removeCustomFramework(framework.id);
+                              }}
+                              className="ml-auto text-slate-400 hover:text-red-600 transition-colors"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                        <div className="text-sm text-slate-500">
+                          {framework.desc}
+                        </div>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+
+              {/* Add Custom Framework */}
+              <div>
+                {!showAddFramework ? (
+                  <button
+                    onClick={() => setShowAddFramework(true)}
+                    className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-slate-300 rounded-lg text-slate-600 hover:border-purple-300 hover:text-purple-600 hover:bg-purple-50 transition-colors"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Legg til eget rammeverk
+                  </button>
+                ) : (
+                  <div className="p-4 border-2 border-purple-300 rounded-lg bg-purple-50">
+                    <label className="block text-sm text-slate-700 mb-2">
+                      Navn på rammeverk
+                    </label>
+                    <input
+                      type="text"
+                      value={newFrameworkName}
+                      onChange={(e) => setNewFrameworkName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          addCustomFramework();
+                        } else if (e.key === "Escape") {
+                          setShowAddFramework(false);
+                          setNewFrameworkName("");
+                        }
+                      }}
+                      placeholder="F.eks. NIS2, DORA, SOC 2..."
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 mb-3"
+                      autoFocus
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={addCustomFramework}
+                        disabled={!newFrameworkName.trim()}
+                        className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors text-sm"
+                      >
+                        Legg til
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowAddFramework(false);
+                          setNewFrameworkName("");
+                        }}
+                        className="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors text-sm"
+                      >
+                        Avbryt
+                      </button>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
 
-            {/* Validation message */}
-            {showValidationError && selectedFrameworks.length === 0 && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm text-red-800">
-                    Du må velge minst ett rammeverk for å fortsette
-                  </p>
-                </div>
-              </div>
-            )}
-            
-            {/* Select All / Clear All buttons */}
-            <div className="flex gap-2 mb-5">
-              <button
-                onClick={selectAllFrameworks}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-purple-200 text-purple-700 rounded-lg hover:bg-purple-50 transition-colors"
+            {/* Right Column - Upload */}
+            <div className="bg-white rounded-xl border border-slate-200 p-8 shadow-sm">
+              <h3 className="text-slate-800 mb-6">Last opp dokumenter</h3>
+              <div
+                className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all ${
+                  uploadedFiles
+                    ? "border-green-500 bg-green-50"
+                    : "border-slate-300 hover:border-slate-400 hover:bg-slate-50"
+                }`}
+                onClick={handleFileUpload}
               >
-                <CheckSquare className="w-4 h-4" />
-                Velg alle
-              </button>
-              {selectedFrameworks.length > 0 && (
-                <button
-                  onClick={clearAllFrameworks}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors"
-                >
-                  <Square className="w-4 h-4" />
-                  Fjern alle
-                </button>
-              )}
-            </div>
-
-            <div className="space-y-3 mb-6">
-              {allFrameworks.map((framework) => {
-                const isCustom = framework.id.startsWith('custom_');
-                return (
-                <label
-                  key={framework.id}
-                  className={`flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                    selectedFrameworks.includes(framework.id)
-                      ? "border-purple-500 bg-purple-50"
-                      : "border-slate-200 hover:border-slate-300"
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedFrameworks.includes(framework.id)}
-                    onChange={() => toggleFramework(framework.id)}
-                    className="mt-1 w-5 h-5 rounded border-2 border-slate-300 bg-white checked:bg-white checked:border-purple-600 checked:accent-purple-600 focus:ring-2 focus:ring-purple-200 focus:ring-offset-0 cursor-pointer"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-slate-800">
-                        {framework.label}
-                      </span>
-                      {isCustom && (
-                        <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs">
-                          Tilpasset
-                        </span>
-                      )}
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            type="button"
-                            onClick={(e) => e.preventDefault()}
-                            className="text-slate-400 hover:text-slate-600 transition-colors"
-                          >
-                            <Info className="w-4 h-4" />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-xs">
-                          <p className="text-sm">
-                            {framework.details}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                      {isCustom && (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            removeCustomFramework(framework.id);
-                          }}
-                          className="ml-auto text-slate-400 hover:text-red-600 transition-colors"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-                    <div className="text-sm text-slate-500">
-                      {framework.desc}
-                    </div>
+                {uploadedFiles ? (
+                  <div className="text-green-600">
+                    <CheckCircle2 className="w-12 h-12 mx-auto mb-3" />
+                    <p>Dokumenter lastet opp</p>
+                    <p className="text-sm mt-1 text-green-700">3 filer</p>
                   </div>
-                </label>
-              );
-              })}
-            </div>
-
-            {/* Add Custom Framework */}
-            <div>
-              {!showAddFramework ? (
-                <button
-                  onClick={() => setShowAddFramework(true)}
-                  className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-slate-300 rounded-lg text-slate-600 hover:border-purple-300 hover:text-purple-600 hover:bg-purple-50 transition-colors"
-                >
-                  <Plus className="w-4 h-4" />
-                  Legg til eget rammeverk
-                </button>
-              ) : (
-                <div className="p-4 border-2 border-purple-300 rounded-lg bg-purple-50">
-                  <label className="block text-sm text-slate-700 mb-2">
-                    Navn på rammeverk
-                  </label>
-                  <input
-                    type="text"
-                    value={newFrameworkName}
-                    onChange={(e) => setNewFrameworkName(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        addCustomFramework();
-                      } else if (e.key === 'Escape') {
-                        setShowAddFramework(false);
-                        setNewFrameworkName("");
-                      }
-                    }}
-                    placeholder="F.eks. NIS2, DORA, SOC 2..."
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 mb-3"
-                    autoFocus
-                  />
-                  <div className="flex gap-2">
-                    <button
-                      onClick={addCustomFramework}
-                      disabled={!newFrameworkName.trim()}
-                      className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors text-sm"
-                    >
-                      Legg til
-                    </button>
-                    <button
-                      onClick={() => {
-                        setShowAddFramework(false);
-                        setNewFrameworkName("");
-                      }}
-                      className="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors text-sm"
-                    >
-                      Avbryt
-                    </button>
+                ) : isUploading ? (
+                  <div className="text-slate-500">
+                    <Loader2 className="w-12 h-12 mx-auto mb-3 animate-spin" />
+                    <p className="text-slate-700">Laster opp dokumenter</p>
+                    <p className="text-sm mt-1">
+                      Policyer, risikoregister, avtaler osv.
+                    </p>
                   </div>
-                </div>
-              )}
+                ) : (
+                  <div className="text-slate-500">
+                    <Upload className="w-12 h-12 mx-auto mb-3" />
+                    <p className="text-slate-700">Last opp dokumenter</p>
+                    <p className="text-sm mt-1">
+                      Policyer, risikoregister, avtaler osv.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-6 p-5 bg-slate-50 border border-slate-200 rounded-lg">
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  Du vil også besvare 10-15 spørsmål for å kartlegge dagens
+                  praksis.
+                </p>
+              </div>
             </div>
           </div>
+        </TooltipProvider>
 
-          {/* Right Column - Upload */}
-          <div className="bg-white rounded-xl border border-slate-200 p-8 shadow-sm">
-            <h3 className="text-slate-800 mb-6">
-              Last opp dokumenter
-            </h3>
-            <div
-              className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all ${
-                uploadedFiles
-                  ? "border-green-500 bg-green-50"
-                  : "border-slate-300 hover:border-slate-400 hover:bg-slate-50"
-              }`}
-              onClick={handleFileUpload}
-            >
-              {uploadedFiles ? (
-                <div className="text-green-600">
-                  <CheckCircle2 className="w-12 h-12 mx-auto mb-3" />
-                  <p>Dokumenter lastet opp</p>
-                  <p className="text-sm mt-1 text-green-700">
-                    3 filer
-                  </p>
-                </div>
-              ) : isUploading ? (
-                <div className="text-slate-500">
-                  <Loader2 className="w-12 h-12 mx-auto mb-3 animate-spin" />
-                  <p className="text-slate-700">
-                    Laster opp dokumenter
-                  </p>
-                  <p className="text-sm mt-1">
-                    Policyer, risikoregister, avtaler osv.
-                  </p>
-                </div>
-              ) : (
-                <div className="text-slate-500">
-                  <Upload className="w-12 h-12 mx-auto mb-3" />
-                  <p className="text-slate-700">
-                    Last opp dokumenter
-                  </p>
-                  <p className="text-sm mt-1">
-                    Policyer, risikoregister, avtaler osv.
-                  </p>
-                </div>
-              )}
-            </div>
-
-            <div className="mt-6 p-5 bg-slate-50 border border-slate-200 rounded-lg">
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Du vil også besvare 10-15 spørsmål for å
-                kartlegge dagens praksis.
-              </p>
-            </div>
-          </div>
+        {/* Info Box */}
+        <div className="mt-10 bg-gradient-to-br from-purple-50 to-purple-100/50 border border-purple-200 rounded-xl p-6 shadow-sm">
+          <h4 className="text-purple-900 mb-3">Lav terskel for oppstart</h4>
+          <p className="text-purple-800 leading-relaxed">
+            Systemet er designet for små team. Selv med kun 2 personer i
+            selskapet kan dere få oversikt over compliance-status og konkrete
+            handlingsplaner.
+          </p>
         </div>
-      </TooltipProvider>
 
-      {/* Info Box */}
-      <div className="mt-10 bg-gradient-to-br from-purple-50 to-purple-100/50 border border-purple-200 rounded-xl p-6 shadow-sm">
-        <h4 className="text-purple-900 mb-3">
-          Lav terskel for oppstart
-        </h4>
-        <p className="text-purple-800 leading-relaxed">
-          Systemet er designet for små team. Selv med kun 2
-          personer i selskapet kan dere få oversikt over
-          compliance-status og konkrete handlingsplaner.
-        </p>
+        {/* Action Button */}
+        <div className="mt-10 flex justify-end">
+          <button
+            onClick={handleNext}
+            className={`px-10 py-4 rounded-lg transition-all shadow-md hover:shadow-lg ${
+              selectedFrameworks.length === 0
+                ? "bg-slate-300 text-slate-500 cursor-not-allowed"
+                : "bg-purple-600 text-white hover:bg-purple-700"
+            }`}
+          >
+            Start kartlegging
+          </button>
+        </div>
       </div>
-
-      {/* Action Button */}
-      <div className="mt-10 flex justify-end">
-        <button
-          onClick={handleNext}
-          className={`px-10 py-4 rounded-lg transition-all shadow-md hover:shadow-lg ${
-            selectedFrameworks.length === 0
-              ? "bg-slate-300 text-slate-500 cursor-not-allowed"
-              : "bg-purple-600 text-white hover:bg-purple-700"
-          }`}
-        >
-          Start kartlegging
-        </button>
-      </div>
-    </div>
+    </>
   );
 }
