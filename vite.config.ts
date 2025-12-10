@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react-swc';
 import path from 'path';
 
 export default defineConfig({
-  // ⬇️ VIKTIG for GitHub Pages
+  // ✅ VIKTIG for GitHub Pages
   base: '/Compliancekompass/',
 
   plugins: [react()],
@@ -57,14 +57,10 @@ export default defineConfig({
   },
   build: {
     target: 'esnext',
-    outDir: 'build',
+    outDir: 'docs', // ✅ RIKTIG for GitHub Pages
   },
   server: {
     port: 3000,
     open: true,
   },
-
-  
 });
-
-
